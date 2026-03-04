@@ -1,10 +1,10 @@
 # Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline
 
-> **Paper**: Brady, T. (2025). *Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline.* The Modal Foundation.
+> **Paper**: Brady, T. (2026). *Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline.* The Modal Foundation.
 
 ## Abstract
 
-We present a five-stage signal detection pipeline — spectral estimation, multi-window cross-validation, bootstrap error quantification, and composite confidence scoring — that transfers without structural modification across six scientific and engineering domains: variable star characterisation, rotating machinery fault diagnosis, volcanic tremor monitoring, tidal constituent extraction, wind turbine anomaly detection, and structural health monitoring. A single stability metric, the coefficient of variation (CV) of detected peak frequencies across overlapping analysis windows, separates physics-constrained periodic systems (CV < 1%) from stochastic processes (CV > 2.97%) with no domain-specific tuning. Across 573 distinct signals the pipeline achieves a mean detection rate of 97.4%, a mean CV of 0.34%, and a mean confidence score of 93.2/100, while three negative-control domains (cryptocurrency markets, heart-rate variability, sunspot cycles) confirm that the CV boundary correctly rejects non-periodic or quasi-periodic signals. The Z24 Bridge case study demonstrates that tracking the first natural frequency with a 4-window configuration detects structural damage onset 72 hours before conventional threshold methods. These results suggest that the dominant obstacle to cross-domain signal detection is not algorithmic but representational: once an appropriate spectral front-end is chosen, the downstream validation and scoring stages generalise without modification.
+We present Ab Astris, a signal detection pipeline built around a fixed core — multi-window stability validation, bootstrap error estimation, and composite confidence scoring — with a default Lomb-Scargle spectral front-end that can be replaced where signal morphology demands it. Originally developed for variable star discovery using NASA TESS photometry, the pipeline transfers to five additional domains (bearing fault detection, volcanic tremor monitoring, oceanographic tidal analysis, wind turbine diagnostics, and structural health monitoring) with domain adaptation confined to preprocessing parameters and, in one case (planetary transits), a single-stage spectral substitution. Across domains spanning seven orders of magnitude in frequency, the coefficient of variation (CV) of detected frequencies provides a consistent empirical measure of signal reliability: mechanical systems cluster below 0.03%, tidal oscillation near 0.17%, structural resonance at 0.4–1%, and volcanic tremor at 1–27% (snapshot-level range across four eruptions). On the CWRU bearing benchmark, the pipeline detects 6 of 8 fault conditions with 0.21% mean frequency error, missing two weak or masked signatures that require domain-specific envelope analysis. On the Z24 bridge progressive damage benchmark (3,678 measurements, 23 damage phases), it tracks frequency degradation of up to 88% while maintaining zero false alarms on healthy baselines. Across six NOAA tide gauge stations, all 24 constituent detections achieve CONFIRMED status with 0.005% mean frequency error. In astronomy, 2,947 periodic discoveries from a systematic survey of 60,638 TESS targets include 556 with mutual detections in the independent Fetherolf TESS Stellar Variability Catalog, of which 517 (93.0%) show direct or harmonic period agreement (mean fractional difference 0.097%); 5 candidates have been accepted by the AAVSO VSX catalogue. Three negative control domains (cryptocurrency, heart rate variability, sunspot numbers) confirm the CV metric's discriminative capacity, producing values of 2.97–72% that are consistently separated from the physics-constrained band below 1%.
 
 ## Quick Start
 
@@ -134,10 +134,10 @@ Stage 1 (preprocessing) is domain-specific — see each domain's module.
 ## Citation
 
 ```bibtex
-@article{brady2025abastris,
+@article{brady2026abastris,
   title={Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline},
   author={Brady, Tom},
-  year={2025},
+  year={2026},
   institution={The Modal Foundation}
 }
 ```
