@@ -10,7 +10,7 @@ This module uses the **CARE benchmark** dataset:
 > for anomaly detection in wind turbine data."
 
 The dataset is available by request from the CARE benchmark organisers.
-See the [CARE benchmark page](https://zenodo.org/records/14178837) for
+See the [CARE benchmark page](https://zenodo.org/records/10958775) for
 access instructions.
 
 Once obtained, place the Parquet files in `data/`:
