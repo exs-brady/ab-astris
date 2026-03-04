@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Data files (use download scripts instead)
+data/
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.parquet
+*.feather
+*.pkl
+
+# Large domain-specific data
+*.mseed
+*.miniseed
+*.sac
+*.V2
+*.V3
+*.mat
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# Credentials & secrets
+.env
+.env.*
+!.env.example
+
+# IDE & OS
+.vscode/
+.idea/
+.claude/
+.DS_Store
+*.swp
+*~
+
+# Node
+node_modules/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz

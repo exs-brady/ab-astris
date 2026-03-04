@@ -1,0 +1,125 @@
+{
+  "analysis_date": "2026-02-08T22:02:23.919230",
+  "experiment": "CESMD Real-World Structural Validation",
+  "earthquake": {
+    "name": "Ridgecrest M6.4 Foreshock",
+    "date": "2019-07-04",
+    "magnitude": 6.4,
+    "location": "35.77N, 117.60W"
+  },
+  "summary": {
+    "n_buildings_analyzed": 4,
+    "confirmed_resonance": 2,
+    "high_confidence": 1,
+    "mean_cv_clean_percent": 5.39,
+    "validation_status": "VALIDATED"
+  },
+  "cross_domain_comparison": {
+    "variable_stars": {
+      "cv_percent": 0.005,
+      "status": "validated"
+    },
+    "bearings_cwru": {
+      "cv_percent": 0.008,
+      "status": "validated"
+    },
+    "structural_lumo": {
+      "cv_percent": 1.02,
+      "status": "validated"
+    },
+    "structural_cesmd": {
+      "cv_percent": 5.39,
+      "status": "validated"
+    },
+    "volcanoes": {
+      "cv_percent": 3.96,
+      "status": "validated"
+    },
+    "crypto_btc": {
+      "cv_percent": 68.0,
+      "status": "rejected"
+    }
+  },
+  "buildings": [
+    {
+      "station_code": "CE23285",
+      "station_name": "San Bernardino - 5-story CSUSB Library",
+      "channel": "4 (90 Deg)",
+      "location": "Roof: South Wall",
+      "sample_rate_hz": 100.0,
+      "duration_s": 83.0,
+      "pga_cm_s2": 41.668,
+      "ls_frequency_hz": 1.909,
+      "ls_frequency_error_hz": 0.0102,
+      "ls_power": 0.060616,
+      "ls_fap": 7.611277812127852e-108,
+      "multi_window_cv": 4.166,
+      "detection_rate": 1.0,
+      "published_frequency_hz": null,
+      "published_source": "CESMD dataset",
+      "deviation_percent": null,
+      "confidence_score": 93.0,
+      "confidence_tier": "CONFIRMED RESONANCE"
+    },
+    {
+      "station_code": "CE23287",
+      "station_name": "San Bernardino - 6-story Hotel",
+      "channel": "8 (180 Deg)",
+      "location": "Roof: Center",
+      "sample_rate_hz": 100.0,
+      "duration_s": 93.0,
+      "pga_cm_s2": 56.203,
+      "ls_frequency_hz": 1.9688,
+      "ls_frequency_error_hz": 0.0017,
+      "ls_power": 0.070682,
+      "ls_fap": 4.608475169428737e-143,
+      "multi_window_cv": 4.292,
+      "detection_rate": 1.0,
+      "published_frequency_hz": 1.1,
+      "published_source": "CESMD dataset",
+      "deviation_percent": 78.99,
+      "confidence_score": 93.0,
+      "confidence_tier": "CONFIRMED RESONANCE"
+    },
+    {
+      "station_code": "CE23555",
+      "station_name": "San Bernardino - 12-story Govt Bldg",
+      "channel": "5 (360 Deg)",
+      "location": "Level 8: West Side",
+      "sample_rate_hz": 100.0,
+      "duration_s": 107.06,
+      "pga_cm_s2": 15.329,
+      "ls_frequency_hz": 0.5765,
+      "ls_frequency_error_hz": 0.0006,
+      "ls_power": 0.113084,
+      "ls_fap": 8.851851607564101e-274,
+      "multi_window_cv": 7.724,
+      "detection_rate": 0.667,
+      "published_frequency_hz": null,
+      "published_source": "CESMD dataset",
+      "deviation_percent": null,
+      "confidence_score": 78.7,
+      "confidence_tier": "HIGH CONFIDENCE"
+    },
+    {
+      "station_code": "CE24517",
+      "station_name": "Lancaster - 3-story Office Bldg.",
+      "channel": "2 (90 Deg)",
+      "location": "Roof: Mid-span",
+      "sample_rate_hz": 100.0,
+      "duration_s": 102.0,
+      "pga_cm_s2": 286.39,
+      "ls_frequency_hz": 4.7785,
+      "ls_frequency_error_hz": 0.018,
+      "ls_power": 0.021965,
+      "ls_fap": 1.855576504792012e-44,
+      "multi_window_cv": 90.993,
+      "detection_rate": 0.667,
+      "published_frequency_hz": null,
+      "published_source": "CESMD dataset",
+      "deviation_percent": null,
+      "confidence_score": 66.7,
+      "confidence_tier": "MODERATE"
+    }
+  ]
+}

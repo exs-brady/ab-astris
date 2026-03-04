@@ -1,0 +1,90 @@
+[
+  {
+    "condition": "Normal",
+    "fault_type": "Normal",
+    "rpm": 1796,
+    "target_freq": 29.933333333333334,
+    "detected_freq": 29.931328755250348,
+    "ls_power": 0.14286767466193107,
+    "freq_error_pct": null,
+    "multi_window_cv_pct": 0.027137873848853168,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "IR 0.007\"",
+    "fault_type": "BPFI",
+    "rpm": 1797,
+    "target_freq": 162.1856941598361,
+    "detected_freq": 161.67077805187012,
+    "ls_power": 0.34277293149150007,
+    "freq_error_pct": 0.31748552832194743,
+    "multi_window_cv_pct": 0.00521330419350106,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "IR 0.014\"",
+    "fault_type": "BPFI",
+    "rpm": 1796,
+    "target_freq": 162.0954405737705,
+    "detected_freq": 162.02546836455764,
+    "ls_power": 0.1143653037124001,
+    "freq_error_pct": 0.04316729018730118,
+    "multi_window_cv_pct": 0.009373449137804678,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "IR 0.021\"",
+    "fault_type": "BPFI",
+    "rpm": 1797,
+    "target_freq": 162.1856941598361,
+    "detected_freq": 161.876125075005,
+    "ls_power": 0.23105802188198174,
+    "freq_error_pct": 0.19087323726961888,
+    "multi_window_cv_pct": 0.009971312693357342,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "OR 0.007\"",
+    "fault_type": "BPFO",
+    "rpm": 1796,
+    "target_freq": 107.3045594262295,
+    "detected_freq": 107.64584305620374,
+    "ls_power": 0.46195130893967795,
+    "freq_error_pct": 0.31805137805805017,
+    "multi_window_cv_pct": 0.009339804477322558,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "OR 0.014\"",
+    "fault_type": "BPFO",
+    "rpm": 1796,
+    "target_freq": 107.3045594262295,
+    "detected_freq": 179.1812787519168,
+    "ls_power": 0.022889721253719127,
+    "freq_error_pct": 66.98384459152606,
+    "multi_window_cv_pct": null,
+    "detection_rate": 0.0
+  },
+  {
+    "condition": "OR 0.021\"",
+    "fault_type": "BPFO",
+    "rpm": 1796,
+    "target_freq": 107.3045594262295,
+    "detected_freq": 107.49649976665111,
+    "ls_power": 0.19119931912093416,
+    "freq_error_pct": 0.17887435673557403,
+    "multi_window_cv_pct": 0.005990056506199342,
+    "detection_rate": 1.0
+  },
+  {
+    "condition": "Ball 0.007\"",
+    "fault_type": "BSF",
+    "rpm": 1796,
+    "target_freq": 70.54531488726929,
+    "detected_freq": 29.91266084405627,
+    "ls_power": 0.021836521867977354,
+    "freq_error_pct": 57.597948365732854,
+    "multi_window_cv_pct": 0.0437900153400274,
+    "detection_rate": 0.75
+  }
+]

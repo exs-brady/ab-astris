@@ -1,0 +1,294 @@
+{
+  "onset_phase": "10",
+  "damage_threshold": 0.15,
+  "n_phases": 23,
+  "n_measurements": 814,
+  "overall_mean_severity": 0.04208345270139466,
+  "overall_mean_sparsity": 0.9867321875230101,
+  "overall_mean_freq_error": 2.633027334597977,
+  "phase_statistics": [
+    {
+      "phase": "01",
+      "severity_mean": 0.0694023501053627,
+      "severity_std": 0.24438369164765958,
+      "severity_max": 0.9659445011273682,
+      "n_measurements": 73,
+      "sparsity_mean": 0.9771689511325261,
+      "freq_error_mean": 3.6811913398571194,
+      "freq_1_mean": 3.7695283226952827,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "02",
+      "severity_mean": 0.016606962513787373,
+      "severity_std": 0.11122026416547343,
+      "severity_max": 0.9636572427783839,
+      "n_measurements": 148,
+      "sparsity_mean": 0.9954954957639849,
+      "freq_error_mean": 1.046315575124975,
+      "freq_1_mean": 3.9656703170317034,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "03",
+      "severity_mean": 0.022754611908936885,
+      "severity_std": 0.1344581734427105,
+      "severity_max": 0.9662090778612795,
+      "n_measurements": 151,
+      "sparsity_mean": 0.9933774838384414,
+      "freq_error_mean": 1.4153994374839909,
+      "freq_1_mean": 3.9543714636364298,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "04",
+      "severity_mean": 0.03736564254107063,
+      "severity_std": 0.16839710630590674,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 98,
+      "sparsity_mean": 0.9884353748389653,
+      "freq_error_mean": 2.0030439377680813,
+      "freq_1_mean": 3.9023342640386485,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "05",
+      "severity_mean": 0.021504974186498327,
+      "severity_std": 0.13033085022340002,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 55,
+      "sparsity_mean": 0.9939393943006342,
+      "freq_error_mean": 1.5595029253236954,
+      "freq_1_mean": 3.9459011355681017,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "06",
+      "severity_mean": 0.00421001078561186,
+      "severity_std": 0.003715812376187535,
+      "severity_max": 0.026811843415764987,
+      "n_measurements": 39,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.4162684690555619,
+      "freq_1_mean": 4.012136341839312,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "07",
+      "severity_mean": 0.0036102142284698845,
+      "severity_std": 7.23934940736026e-05,
+      "severity_max": 0.0039044036584172733,
+      "n_measurements": 111,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.3776643401348445,
+      "freq_1_mean": 4.004363544462554,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "08",
+      "severity_mean": 0.03380476597273224,
+      "severity_std": 0.1709098243898011,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 32,
+      "sparsity_mean": 0.989583333954215,
+      "freq_error_mean": 2.3355762811952023,
+      "freq_1_mean": 3.8886294879487946,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "09",
+      "severity_mean": 0.09103466613284804,
+      "severity_std": 0.2901747717769581,
+      "severity_max": 0.9659445011273682,
+      "n_measurements": 11,
+      "sparsity_mean": 0.969696971503171,
+      "freq_error_mean": 4.953708032578503,
+      "freq_1_mean": 3.677865968415023,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "10",
+      "severity_mean": 0.4870674601114664,
+      "severity_std": 0.6835407080531976,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 2,
+      "sparsity_mean": 0.8333333432674408,
+      "freq_error_mean": 32.23520178884406,
+      "freq_1_mean": 2.2607910791079107,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "11",
+      "severity_mean": 0.48719568607147135,
+      "severity_std": 0.6833593691615103,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 2,
+      "sparsity_mean": 0.8333333432674408,
+      "freq_error_mean": 32.35995701784274,
+      "freq_1_mean": 2.2869911991199117,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "12",
+      "severity_mean": 0.9704037299929366,
+      "severity_std": NaN,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 1,
+      "sparsity_mean": 0.6666666865348816,
+      "freq_error_mean": 63.93200703433739,
+      "freq_1_mean": 0.4841734173417342,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "14",
+      "severity_mean": 0.7287756692201962,
+      "severity_std": 0.48325612154548075,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 4,
+      "sparsity_mean": 0.7500000149011612,
+      "freq_error_mean": 48.1253434270276,
+      "freq_1_mean": 1.381215621562156,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "15",
+      "severity_mean": 0.24526563902628115,
+      "severity_std": 0.4834253962268943,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 4,
+      "sparsity_mean": 0.9166666716337204,
+      "freq_error_mean": 16.204392456109513,
+      "freq_1_mean": 3.1116711671167114,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "16",
+      "severity_mean": 0.24523146028737564,
+      "severity_std": 0.4834481804696159,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 4,
+      "sparsity_mean": 0.9166666716337204,
+      "freq_error_mean": 16.149049006097837,
+      "freq_1_mean": 3.1004425442544257,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "17",
+      "severity_mean": 0.4869544403149348,
+      "severity_std": 0.5295921650520623,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 6,
+      "sparsity_mean": 0.8333333432674408,
+      "freq_error_mean": 32.071598842199066,
+      "freq_1_mean": 2.2271052105210516,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "18",
+      "severity_mean": 0.0035053319684249322,
+      "severity_std": 9.43719697917891e-05,
+      "severity_max": 0.003591019890166694,
+      "n_measurements": 3,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.23208387461208324,
+      "freq_1_mean": 3.969205253858719,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "19",
+      "severity_mean": 0.32584823325494405,
+      "severity_std": 0.5582014343385431,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 3,
+      "sparsity_mean": 0.8888888955116272,
+      "freq_error_mean": 21.528058249853412,
+      "freq_1_mean": 2.823885721905523,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "20",
+      "severity_mean": 0.003524563119059699,
+      "severity_std": 1.546927142567848e-05,
+      "severity_max": 0.0035355015457848114,
+      "n_measurements": 2,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.2523340323018398,
+      "freq_1_mean": 3.978770377037703,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "21",
+      "severity_mean": 0.07011518912653901,
+      "severity_std": 0.24936461511140653,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 29,
+      "sparsity_mean": 0.9770114956230953,
+      "freq_error_mean": 4.5287244298817795,
+      "freq_1_mean": 3.7014104858761736,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "22",
+      "severity_mean": 0.0034580784729211487,
+      "severity_std": 3.828836755687348e-05,
+      "severity_max": 0.0035136246923345863,
+      "n_measurements": 7,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.12780551249451322,
+      "freq_1_mean": 3.953283185461403,
+      "mode_damage_element": 13
+    },
+    {
+      "phase": "23",
+      "severity_mean": 0.6481023749925041,
+      "severity_std": 0.5582423222090425,
+      "severity_max": 0.9704037299929366,
+      "n_measurements": 3,
+      "sparsity_mean": 0.7777777910232544,
+      "freq_error_mean": 42.69104190138523,
+      "freq_1_mean": 1.6461279461279459,
+      "mode_damage_element": 6
+    },
+    {
+      "phase": "24",
+      "severity_mean": 0.0034002224551542702,
+      "severity_std": 2.6466921554385134e-05,
+      "severity_max": 0.0034426911283958164,
+      "n_measurements": 26,
+      "sparsity_mean": 1.0,
+      "freq_error_mean": 0.11418960468272008,
+      "freq_1_mean": 3.9278097040473274,
+      "mode_damage_element": 13
+    }
+  ],
+  "validation_criteria": {
+    "healthy_baseline_clean": {
+      "pass": "True",
+      "mean_severity": 0.0694023501053627,
+      "max_severity": 0.9659445011273682,
+      "threshold": 0.15
+    },
+    "damage_onset_timing": {
+      "pass": false,
+      "onset_phase": "10",
+      "target": "\u2264 Phase 05"
+    },
+    "monotonic_progression": {
+      "pass": "False",
+      "n_decreases": "11",
+      "max_decrease": -0.6447021525373499
+    },
+    "frequency_reconstruction": {
+      "pass": "True",
+      "mean_error_pct": 2.633027334597977,
+      "target": "<5%"
+    },
+    "sparse_predictions": {
+      "pass": "True",
+      "mean_sparsity": 0.9867321875230101,
+      "target": ">0.8"
+    }
+  },
+  "timestamp": "2026-03-02T23:02:47.320065",
+  "test_mode": false
+}

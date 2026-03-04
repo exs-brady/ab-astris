@@ -1,0 +1,916 @@
+{
+  "experiment": "oceanography_multi_station_validation",
+  "methodology": "Ab Astris (Lomb-Scargle + Multi-window + Bootstrap)",
+  "data_source": "NOAA CO-OPS Tide Gauges",
+  "timestamp": "2026-02-25T11:00:05.691651",
+  "parameters": {
+    "sampling_interval_sec": 3600,
+    "n_windows": 8,
+    "window_duration_days": 30,
+    "n_bootstrap": 100,
+    "n_freq_points": 10000,
+    "diurnal_band_cpd": [
+      0.4,
+      1.2
+    ],
+    "semidiurnal_band_cpd": [
+      1.5,
+      2.5
+    ]
+  },
+  "stations": {
+    "9414290": {
+      "name": "San Francisco",
+      "location": "CA",
+      "tidal_type": "Mixed, mainly semidiurnal",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.236421067823449e-05,
+          "ls_frequency_cpd": 1.93226780259946,
+          "ls_power": 0.8877029790049366,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.10008334013000403,
+          "multi_window_cv_clean": 0.10008334013000403,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.2364198600316698e-05,
+          "bootstrap_freq_std": 8.073165421215416e-11,
+          "bootstrap_ci_low": 2.2364076479147913e-05,
+          "bootstrap_ci_high": 2.2364344877321066e-05,
+          "freq_error_percent": 0.00030003000300265163,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.314946772455023e-05,
+          "ls_frequency_cpd": 2.00011401140114,
+          "ls_power": 0.06298972984446008,
+          "ls_fap": 1.5517263679863619e-118,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3149530230800857e-05,
+          "bootstrap_freq_std": 7.337893460295873e-10,
+          "bootstrap_ci_low": 2.31480057727995e-05,
+          "bootstrap_ci_high": 2.3150790773521795e-05,
+          "freq_error_percent": 0.005700570056999953,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.1607051099981527e-05,
+          "ls_frequency_cpd": 1.0028492150384039,
+          "ls_power": 0.6400995645163104,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.1713685345549512,
+          "multi_window_cv_clean": 0.1713685345549512,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.1607094277736665e-05,
+          "bootstrap_freq_std": 1.2526962662153276e-10,
+          "bootstrap_ci_low": 1.160691181690044e-05,
+          "bootstrap_ci_high": 1.1607329666143699e-05,
+          "freq_error_percent": 0.011101110111005726,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.0758353652431215e-05,
+          "ls_frequency_cpd": 0.929521755570057,
+          "ls_power": 0.30207746195742574,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.45252946146948253,
+          "multi_window_cv_clean": 0.45252946146948253,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.075838915908153e-05,
+          "bootstrap_freq_std": 2.656093902350716e-10,
+          "bootstrap_ci_low": 1.0757867856897322e-05,
+          "bootstrap_ci_high": 1.0758934670345507e-05,
+          "freq_error_percent": 0.001500150015003319,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.180995,
+        "max_cv": 0.452529,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0047,
+        "max_freq_error_pct": 0.0111,
+        "mean_confidence_score": 92.5,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.0916,
+        "peak_frequency_cpd": 0.0919,
+        "peak_period_days": 10.88,
+        "peak_power": 0.0281,
+        "peak_fap": 2.4932225305635757e-49,
+        "multi_window_cv": 31.704,
+        "detection_rate": 0.0,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 0.0919,
+            "period_days": 10.88,
+            "power": 0.0281
+          },
+          {
+            "frequency_cpd": 0.0871,
+            "period_days": 11.48,
+            "power": 0.0197
+          },
+          {
+            "frequency_cpd": 0.0832,
+            "period_days": 12.02,
+            "power": 0.0197
+          },
+          {
+            "frequency_cpd": 0.1347,
+            "period_days": 7.43,
+            "power": 0.0156
+          },
+          {
+            "frequency_cpd": 0.1125,
+            "period_days": 8.89,
+            "power": 0.015
+          }
+        ]
+      }
+    },
+    "8518750": {
+      "name": "The Battery",
+      "location": "New York, NY",
+      "tidal_type": "Semidiurnal",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.2364076479147913e-05,
+          "ls_frequency_cpd": 1.9322562077983796,
+          "ls_power": 0.9107464941888505,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.0886099056171352,
+          "multi_window_cv_clean": 0.0886099056171352,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.2364081847111382e-05,
+          "bootstrap_freq_std": 7.330759455551971e-11,
+          "bootstrap_ci_low": 2.236394228006134e-05,
+          "bootstrap_ci_high": 2.236421067823449e-05,
+          "freq_error_percent": 0.0009000900090079551,
+          "confidence_score": 95.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.314946772455023e-05,
+          "ls_frequency_cpd": 2.00011401140114,
+          "ls_power": 0.041034734219352234,
+          "ls_fap": 1.0430626859072459e-74,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3149530230800853e-05,
+          "bootstrap_freq_std": 8.737360214440865e-10,
+          "bootstrap_ci_low": 2.3147793946061273e-05,
+          "bootstrap_ci_high": 2.3150929676300963e-05,
+          "freq_error_percent": 0.005700570056999953,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.1606285043035555e-05,
+          "ls_frequency_cpd": 1.0027830277182719,
+          "ls_power": 0.5271809962901681,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.24113834701331646,
+          "multi_window_cv_clean": 0.24113834701331646,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.1606285043035554e-05,
+          "bootstrap_freq_std": 1.7891235708217002e-10,
+          "bootstrap_ci_low": 1.160593683533284e-05,
+          "bootstrap_ci_high": 1.160663325073827e-05,
+          "freq_error_percent": 0.004500450045009029,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.0759128342983605e-05,
+          "ls_frequency_cpd": 0.9295886888337834,
+          "ls_power": 0.15744972134333876,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.47450231313749014,
+          "multi_window_cv_clean": 0.47450231313749014,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.0759245192141923e-05,
+          "bootstrap_freq_std": 4.336129058494579e-10,
+          "bootstrap_ci_low": 1.075838431726558e-05,
+          "bootstrap_ci_high": 1.076009670617409e-05,
+          "freq_error_percent": 0.005700570057012612,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.201063,
+        "max_cv": 0.474502,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0042,
+        "max_freq_error_pct": 0.0057,
+        "mean_confidence_score": 93.8,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.1519,
+        "peak_frequency_cpd": 0.1568,
+        "peak_period_days": 6.38,
+        "peak_power": 0.0252,
+        "peak_fap": 8.719123334851244e-44,
+        "multi_window_cv": 55.874,
+        "detection_rate": 0.0,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 0.1568,
+            "period_days": 6.38,
+            "power": 0.0252
+          },
+          {
+            "frequency_cpd": 0.0816,
+            "period_days": 12.26,
+            "power": 0.0252
+          },
+          {
+            "frequency_cpd": 0.0863,
+            "period_days": 11.58,
+            "power": 0.0202
+          },
+          {
+            "frequency_cpd": 0.1877,
+            "period_days": 5.33,
+            "power": 0.0179
+          },
+          {
+            "frequency_cpd": 0.1275,
+            "period_days": 7.84,
+            "power": 0.0176
+          }
+        ]
+      }
+    },
+    "8724580": {
+      "name": "Key West",
+      "location": "FL",
+      "tidal_type": "Mixed, mainly diurnal",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.2364076479147913e-05,
+          "ls_frequency_cpd": 1.9322562077983796,
+          "ls_power": 0.8727443874285251,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.10095229503076802,
+          "multi_window_cv_clean": 0.10095229503076802,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.236407782113879e-05,
+          "bootstrap_freq_std": 8.591886256168958e-11,
+          "bootstrap_ci_low": 2.236394228006134e-05,
+          "bootstrap_ci_high": 2.236421067823449e-05,
+          "freq_error_percent": 0.0009000900090079551,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.3150162238446067e-05,
+          "ls_frequency_cpd": 2.00017401740174,
+          "ls_power": 0.08311988973022473,
+          "ls_fap": 1.1670274501610647e-159,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3150046949139357e-05,
+          "bootstrap_freq_std": 6.115051886191836e-10,
+          "bootstrap_ci_low": 2.3148773210654398e-05,
+          "bootstrap_ci_high": 2.31512734606794e-05,
+          "freq_error_percent": 0.008700870087012254,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.1606285043035555e-05,
+          "ls_frequency_cpd": 1.0027830277182719,
+          "ls_power": 0.40392165758756143,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.20077169155740268,
+          "multi_window_cv_clean": 0.20077169155740268,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.160626415057339e-05,
+          "bootstrap_freq_std": 2.4074225391882237e-10,
+          "bootstrap_ci_low": 1.1605797552251755e-05,
+          "bootstrap_ci_high": 1.1606772533819356e-05,
+          "freq_error_percent": 0.004500450045009029,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.0758159979793118e-05,
+          "ls_frequency_cpd": 0.9295050222541253,
+          "ls_power": 0.510860001178929,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.25926676050631664,
+          "multi_window_cv_clean": 0.25926676050631664,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.0758194195292516e-05,
+          "bootstrap_freq_std": 1.8224333399674642e-10,
+          "bootstrap_ci_low": 1.0757837192062957e-05,
+          "bootstrap_ci_high": 1.0758547325069313e-05,
+          "freq_error_percent": 0.0033003300330073024,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.140248,
+        "max_cv": 0.259267,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0044,
+        "max_freq_error_pct": 0.0087,
+        "mean_confidence_score": 92.5,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.066,
+        "peak_frequency_cpd": 0.1347,
+        "peak_period_days": 7.43,
+        "peak_power": 0.017,
+        "peak_fap": 6.684832850114567e-28,
+        "multi_window_cv": 28.365,
+        "detection_rate": 0.125,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 0.1347,
+            "period_days": 7.43,
+            "power": 0.017
+          },
+          {
+            "frequency_cpd": 0.1251,
+            "period_days": 7.99,
+            "power": 0.0148
+          },
+          {
+            "frequency_cpd": 0.1204,
+            "period_days": 8.31,
+            "power": 0.0137
+          },
+          {
+            "frequency_cpd": 0.0966,
+            "period_days": 10.35,
+            "power": 0.0123
+          },
+          {
+            "frequency_cpd": 0.1386,
+            "period_days": 7.21,
+            "power": 0.0119
+          }
+        ]
+      }
+    },
+    "1612340": {
+      "name": "Honolulu",
+      "location": "HI",
+      "tidal_type": "Mixed",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.2363808080974764e-05,
+          "ls_frequency_cpd": 1.9322330181962195,
+          "ls_power": 0.8422534287710854,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.08117296008126415,
+          "multi_window_cv_clean": 0.08117296008126415,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.2363825526856017e-05,
+          "bootstrap_freq_std": 9.033303272353571e-11,
+          "bootstrap_ci_low": 2.2363673881888187e-05,
+          "bootstrap_ci_high": 2.236394228006134e-05,
+          "freq_error_percent": 0.0021002100210034116,
+          "confidence_score": 95.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.31504400440044e-05,
+          "ls_frequency_cpd": 2.00019801980198,
+          "ls_power": 0.10913580559762144,
+          "ls_fap": 3.470464779744167e-214,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3150415041504146e-05,
+          "bootstrap_freq_std": 5.38104418461169e-10,
+          "bootstrap_ci_low": 2.3149328821771066e-05,
+          "bootstrap_ci_high": 2.3151412363458568e-05,
+          "freq_error_percent": 0.009900990099008392,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.160712074152207e-05,
+          "ls_frequency_cpd": 1.0028552320675068,
+          "ls_power": 0.6948677557164226,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.15870004461538564,
+          "multi_window_cv_clean": 0.15870004461538564,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.160716043720018e-05,
+          "bootstrap_freq_std": 1.1197138327187861e-10,
+          "bootstrap_ci_low": 1.1606981458440984e-05,
+          "bootstrap_ci_high": 1.1607366227952484e-05,
+          "freq_error_percent": 0.011701170117014716,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.0758159979793118e-05,
+          "ls_frequency_cpd": 0.9295050222541253,
+          "ls_power": 0.24701774055202558,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.4333011600520761,
+          "multi_window_cv_clean": 0.29961083372790154,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.0758209689103564e-05,
+          "bootstrap_freq_std": 3.0593125622625876e-10,
+          "bootstrap_ci_low": 1.075764351942486e-05,
+          "bootstrap_ci_high": 1.0758808783130743e-05,
+          "freq_error_percent": 0.0033003300330073024,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.134871,
+        "max_cv": 0.299611,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0068,
+        "max_freq_error_pct": 0.0117,
+        "mean_confidence_score": 93.8,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.0518,
+        "peak_frequency_cpd": 1.9295,
+        "peak_period_days": 0.52,
+        "peak_power": 0.0345,
+        "peak_fap": 6.373723159138444e-62,
+        "multi_window_cv": 71.381,
+        "detection_rate": 0.625,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 1.9295,
+            "period_days": 0.52,
+            "power": 0.0345
+          },
+          {
+            "frequency_cpd": 2.0,
+            "period_days": 0.5,
+            "power": 0.0077
+          },
+          {
+            "frequency_cpd": 0.103,
+            "period_days": 9.71,
+            "power": 0.0046
+          },
+          {
+            "frequency_cpd": 0.0903,
+            "period_days": 11.07,
+            "power": 0.004
+          },
+          {
+            "frequency_cpd": 1.0012,
+            "period_days": 1.0,
+            "power": 0.0036
+          }
+        ]
+      }
+    },
+    "9447130": {
+      "name": "Seattle",
+      "location": "WA",
+      "tidal_type": "Mixed, mainly semidiurnal",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.2364344877321066e-05,
+          "ls_frequency_cpd": 1.93227939740054,
+          "ls_power": 0.8923929372429286,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.10841810008602279,
+          "multi_window_cv_clean": 0.10841810008602279,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.2364342193339336e-05,
+          "bootstrap_freq_std": 7.820479836277488e-11,
+          "bootstrap_ci_low": 2.236421067823449e-05,
+          "bootstrap_ci_high": 2.2364479076407642e-05,
+          "freq_error_percent": 0.00030003000300265163,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.31500233356669e-05,
+          "ls_frequency_cpd": 2.00016201620162,
+          "ls_power": 0.06504248305801873,
+          "ls_fap": 1.0934621463551205e-122,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3149989998999898e-05,
+          "bootstrap_freq_std": 7.0639130914466e-10,
+          "bootstrap_ci_low": 2.314863430787523e-05,
+          "bootstrap_ci_high": 2.3151134557900232e-05,
+          "freq_error_percent": 0.008100810081006866,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.160712074152207e-05,
+          "ls_frequency_cpd": 1.0028552320675068,
+          "ls_power": 0.6913377362179317,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.20323777180027966,
+          "multi_window_cv_clean": 0.20323777180027966,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.160711934869126e-05,
+          "bootstrap_freq_std": 1.226086740278574e-10,
+          "bootstrap_ci_low": 1.160691181690044e-05,
+          "bootstrap_ci_high": 1.1607366227952484e-05,
+          "freq_error_percent": 0.011701170117014716,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.0758547325069313e-05,
+          "ls_frequency_cpd": 0.9295384888859887,
+          "ls_power": 0.25291633856246204,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.5061487291367781,
+          "multi_window_cv_clean": 0.5061487291367781,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.0758537641437407e-05,
+          "bootstrap_freq_std": 3.1578803876831184e-10,
+          "bootstrap_ci_low": 1.075796630715502e-05,
+          "bootstrap_ci_high": 1.0759257458075668e-05,
+          "freq_error_percent": 0.0003000300030006638,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.204451,
+        "max_cv": 0.506149,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0051,
+        "max_freq_error_pct": 0.0117,
+        "mean_confidence_score": 92.5,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.1261,
+        "peak_frequency_cpd": 1.0709,
+        "peak_period_days": 0.93,
+        "peak_power": 0.0311,
+        "peak_fap": 3.843701843302304e-55,
+        "multi_window_cv": 97.354,
+        "detection_rate": 0.25,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 1.0709,
+            "period_days": 0.93,
+            "power": 0.0311
+          },
+          {
+            "frequency_cpd": 0.9347,
+            "period_days": 1.07,
+            "power": 0.0218
+          },
+          {
+            "frequency_cpd": 2.9299,
+            "period_days": 0.34,
+            "power": 0.0151
+          },
+          {
+            "frequency_cpd": 0.0887,
+            "period_days": 11.27,
+            "power": 0.0111
+          },
+          {
+            "frequency_cpd": 0.099,
+            "period_days": 10.1,
+            "power": 0.0104
+          }
+        ]
+      }
+    },
+    "8658120": {
+      "name": "Wilmington",
+      "location": "NC",
+      "tidal_type": "Semidiurnal",
+      "year": 2023,
+      "n_observations": 8737,
+      "duration_days": 364.0,
+      "constituents": [
+        {
+          "constituent_name": "M2",
+          "target_freq_hz": 2.2364277777777777e-05,
+          "target_freq_cpd": 1.9322736,
+          "ls_frequency_hz": 2.236394228006134e-05,
+          "ls_frequency_cpd": 1.9322446129972999,
+          "ls_power": 0.9356184512302529,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.09414635726331341,
+          "multi_window_cv_clean": 0.09414635726331341,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.2363914098253158e-05,
+          "bootstrap_freq_std": 7.892686281832204e-11,
+          "bootstrap_ci_low": 2.2363808080974764e-05,
+          "bootstrap_ci_high": 2.2364076479147913e-05,
+          "freq_error_percent": 0.0015001500149981087,
+          "confidence_score": 95.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "S2",
+          "target_freq_hz": 2.3148148148148147e-05,
+          "target_freq_cpd": 2.0,
+          "ls_frequency_hz": 2.3149745530108566e-05,
+          "ls_frequency_cpd": 2.0001380138013802,
+          "ls_power": 0.019110883026724857,
+          "ls_fap": 5.229693570898951e-32,
+          "multi_window_cv": 0.0,
+          "multi_window_cv_clean": 0.0,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 2.3149653854274318e-05,
+          "bootstrap_freq_std": 1.2177932314940916e-09,
+          "bootstrap_ci_low": 2.3147099432165437e-05,
+          "bootstrap_ci_high": 2.3151901995755128e-05,
+          "freq_error_percent": 0.006900690069010728,
+          "confidence_score": 100.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "K1",
+          "target_freq_hz": 1.1605762731481483e-05,
+          "target_freq_cpd": 1.0027379,
+          "ls_frequency_hz": 1.1604544004521981e-05,
+          "ls_frequency_cpd": 1.0026326019906993,
+          "ls_power": 0.4338877098574167,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.35854683052322334,
+          "multi_window_cv_clean": 0.35854683052322334,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.1604551665091442e-05,
+          "bootstrap_freq_std": 2.4362498178174915e-10,
+          "bootstrap_ci_low": 1.1604126155278724e-05,
+          "bootstrap_ci_high": 1.1604998415574025e-05,
+          "freq_error_percent": 0.010501050105011336,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        },
+        {
+          "constituent_name": "O1",
+          "target_freq_hz": 1.0758515046296297e-05,
+          "target_freq_cpd": 0.9295357,
+          "ls_frequency_hz": 1.075874099770741e-05,
+          "ls_frequency_cpd": 0.9295552222019202,
+          "ls_power": 0.3289930566354832,
+          "ls_fap": 0.0,
+          "multi_window_cv": 0.19745562867974067,
+          "multi_window_cv_clean": 0.19745562867974067,
+          "detection_rate": 1.0,
+          "bootstrap_freq_mean": 1.0758807491979821e-05,
+          "bootstrap_freq_std": 2.5060554205629403e-10,
+          "bootstrap_ci_low": 1.0758285867007882e-05,
+          "bootstrap_ci_high": 1.07593220156217e-05,
+          "freq_error_percent": 0.0021002100210046467,
+          "confidence_score": 90.0,
+          "confidence_tier": "CONFIRMED"
+        }
+      ],
+      "summary": {
+        "mean_cv": 0.162537,
+        "max_cv": 0.358547,
+        "min_cv": 0.0,
+        "mean_freq_error_pct": 0.0053,
+        "max_freq_error_pct": 0.0105,
+        "mean_confidence_score": 93.8,
+        "all_confirmed": true,
+        "n_confirmed": 4,
+        "n_probable": 0,
+        "n_candidate": 0,
+        "n_noise": 0
+      },
+      "residual": {
+        "n_points": 8737,
+        "residual_std_m": 0.115,
+        "peak_frequency_cpd": 0.1069,
+        "peak_period_days": 9.35,
+        "peak_power": 0.015,
+        "peak_fap": 3.7642491361554956e-24,
+        "multi_window_cv": 12.532,
+        "detection_rate": 0.375,
+        "top_5_peaks": [
+          {
+            "frequency_cpd": 0.1069,
+            "period_days": 9.35,
+            "power": 0.015
+          },
+          {
+            "frequency_cpd": 5.7608,
+            "period_days": 0.17,
+            "power": 0.0136
+          },
+          {
+            "frequency_cpd": 0.0879,
+            "period_days": 11.37,
+            "power": 0.0108
+          },
+          {
+            "frequency_cpd": 0.0966,
+            "period_days": 10.35,
+            "power": 0.0098
+          },
+          {
+            "frequency_cpd": 1.9343,
+            "period_days": 0.52,
+            "power": 0.0093
+          }
+        ]
+      }
+    }
+  },
+  "cross_station_summary": {
+    "n_stations": 6,
+    "total_constituents_tested": 24,
+    "total_confirmed": 24,
+    "total_probable": 0,
+    "total_candidate": 0,
+    "total_noise": 0,
+    "overall_mean_cv": 0.170694,
+    "overall_mean_freq_error_pct": 0.0051,
+    "overall_detection_rate": 1.0,
+    "m2_cv_range": [
+      0.081173,
+      0.108418
+    ],
+    "m2_cv_mean": 0.095564,
+    "m2_error_range": [
+      0.0003,
+      0.0021
+    ],
+    "m2_error_mean": 0.001,
+    "s2_cv_range": [
+      0.0,
+      0.0
+    ],
+    "s2_cv_mean": 0.0,
+    "s2_error_range": [
+      0.0057,
+      0.0099
+    ],
+    "s2_error_mean": 0.0075,
+    "k1_cv_range": [
+      0.1587,
+      0.358547
+    ],
+    "k1_cv_mean": 0.222294,
+    "k1_error_range": [
+      0.0045,
+      0.0117
+    ],
+    "k1_error_mean": 0.009,
+    "o1_cv_range": [
+      0.197456,
+      0.506149
+    ],
+    "o1_cv_mean": 0.364919,
+    "o1_error_range": [
+      0.0003,
+      0.0057
+    ],
+    "o1_error_mean": 0.0027
+  },
+  "cross_domain_comparison": {
+    "variable_stars": {
+      "cv_mean": 0.005,
+      "detection_rate": 1.0
+    },
+    "bearings": {
+      "cv_mean": 0.008,
+      "detection_rate": 1.0
+    },
+    "oceanography_tidal": {
+      "cv_mean": 0.170694,
+      "detection_rate": 1.0
+    },
+    "structural": {
+      "cv_mean": 1.0,
+      "detection_rate": 1.0
+    },
+    "volcanoes": {
+      "cv_mean": 3.96,
+      "detection_rate": 0.997
+    },
+    "crypto": {
+      "cv_mean": 68.0,
+      "detection_rate": 0.3
+    }
+  }
+}

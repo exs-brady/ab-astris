@@ -1,0 +1,20 @@
+# Ab Astris — Cross-Domain Signal Detection Pipeline
+# Core dependencies (all domains)
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+pandas>=2.0
+astropy>=5.3
+
+# Domain-specific (install as needed)
+# Astronomy: lightkurve (TESS data access)
+# lightkurve>=2.4
+
+# Tremorscope: seismic data download
+# obspy>=1.4
+
+# Negative controls: HRV data
+# wfdb>=4.1
+
+# Testing
+pytest>=7.0

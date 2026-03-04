@@ -1,0 +1,817 @@
+\documentclass[11pt,a4paper]{article}
+
+% ── Packages ──────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{natbib}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+% ── Convenience macros ────────────────────────────────────
+\newcommand{\CV}{\mathrm{CV}}
+\newcommand{\ie}{i.e.\@\xspace}
+\newcommand{\eg}{e.g.\@\xspace}
+\usepackage{xspace}
+
+% ── Title ─────────────────────────────────────────────────
+\title{\textbf{Ab Astris: Cross-Domain Transfer of a\\
+Physics-Constrained Signal Detection Pipeline}}
+\author{Tom Brady\\
+\textit{Founder, The Modal Foundation}\\
+\texttt{tom@modalfoundation.org}}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ══════════════════════════════════════════════════════════
+% ABSTRACT
+% ══════════════════════════════════════════════════════════
+\begin{abstract}
+We present Ab Astris, a signal detection pipeline built around a fixed core---multi-window stability validation, bootstrap error estimation, and composite confidence scoring---with a default Lomb-Scargle spectral front-end that can be replaced where signal morphology demands it. Originally developed for variable star discovery using NASA TESS photometry, the pipeline transfers to five additional domains (bearing fault detection, volcanic tremor monitoring, oceanographic tidal analysis, wind turbine diagnostics, and structural health monitoring) with domain adaptation confined to preprocessing parameters and, in one case (planetary transits), a single-stage spectral substitution. Across domains spanning seven orders of magnitude in frequency, the coefficient of variation (CV) of detected frequencies provides a consistent empirical measure of signal reliability: mechanical systems cluster below 0.03\%, tidal oscillation near 0.17\%, structural resonance at 0.4--1\%, and volcanic tremor at 1--27\% (snapshot-level range across four eruptions). On the CWRU bearing benchmark, the pipeline detects 6 of 8 fault conditions with 0.21\% mean frequency error, missing two weak or masked signatures that require domain-specific envelope analysis. On the Z24 bridge progressive damage benchmark (3{,}678 measurements, 23 damage phases), it tracks frequency degradation of up to 88\% while maintaining zero false alarms on healthy baselines. Across six NOAA tide gauge stations, all 24 constituent detections achieve \textsc{confirmed} status with 0.005\% mean frequency error. In astronomy, 2{,}947 periodic discoveries from a systematic survey of 60{,}638 TESS targets include 556 with mutual detections in the independent Fetherolf TESS Stellar Variability Catalog \citep{Fetherolf2023}, of which 517 (93.0\%) show direct or harmonic period agreement (mean fractional difference 0.097\%); 5 candidates have been accepted by the AAVSO VSX catalogue. Combined cross-matching against Gaia DR3, ASAS-SN, ZTF, and ATLAS confirms 1{,}563 (53.0\%) of discoveries in at least one external catalogue, with 1{,}384 (47.0\%) absent from all catalogues checked---of which 107 have no prior variability record in any of 20 variability databases surveyed. Three negative control domains (cryptocurrency, heart rate variability, sunspot numbers) confirm the CV metric's discriminative capacity, producing values of 2.97--72\% that are consistently separated from the physics-constrained band below 1\%. The pipeline is positioned as a first-pass screening tool: broad, interpretable detection across domains, with domain-specific methods reserved where generic sensitivity is insufficient.
+\end{abstract}
+
+\noindent\textbf{Keywords:} \textit{cross-domain signal detection, Lomb-Scargle periodogram, structural health monitoring, condition monitoring, tidal analysis, transfer methodology}
+
+% ══════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:introduction}
+% ══════════════════════════════════════════════════════════
+
+Periodic signal detection is a foundational task across engineering and the physical sciences. Vibration analysts monitor bearing defect frequencies to predict mechanical failure. Seismologists track volcanic tremor bands to assess eruption risk. Structural engineers extract natural frequencies from ambient vibration to evaluate building integrity. Astronomers identify periodic brightness variations to classify variable stars and detect transiting exoplanets. In each case, the core technical problem is the same: identify a periodic signal embedded in noise, assess its statistical significance, and characterise its stability over time.
+
+Yet these communities have developed their tools largely in isolation. Bearing condition monitoring relies on envelope analysis and fault frequency catalogues. Volcanic seismology uses spectrograms and tremor band ratios. Operational modal analysis employs frequency domain decomposition and stochastic subspace identification. Each discipline has built domain-specific pipelines that share the same mathematical foundations (spectral estimation, windowing, significance testing) but with independent implementations, thresholds, and validation procedures.
+
+This fragmentation creates practical inefficiencies. Signal processing pipelines are reimplemented in each domain rather than shared. Detection thresholds are calibrated to domain-specific noise characteristics rather than derived from general statistical principles. And without cross-domain comparison, it is difficult to distinguish which properties of a detection method reflect genuine signal characteristics from those that are artefacts of a particular measurement context.
+
+A natural question follows: how much of the domain-specific machinery is actually necessary? If the underlying mathematical problem is the same (detect a periodic signal, assess its significance, measure its stability), could a single pipeline, with appropriate preprocessing, serve multiple domains?
+
+This paper presents evidence that the answer is partially yes. We describe Ab Astris, a signal detection pipeline originally developed for variable star discovery using photometric time series from NASA's TESS satellite, and demonstrate that it transfers to five additional domains (industrial bearing fault detection, volcanic tremor monitoring, oceanographic tidal analysis, wind turbine drivetrain diagnostics, and structural health monitoring of civil infrastructure) with minimal adaptation.
+
+The pipeline is designed around a fixed detection-validation-scoring core (multi-window stability validation, bootstrap error estimation, composite confidence scoring) with a pluggable spectral estimation front-end. The default front-end is the Lomb-Scargle periodogram, which handles all six domains. In one case---planetary transit detection, where the signal morphology is box-shaped rather than sinusoidal---the front-end is replaced by the Box Least Squares algorithm while the validation and scoring stages remain identical. Domain adaptation is otherwise confined to preprocessing parameters (bandpass frequency ranges, analysis window durations, and physical plausibility bounds in the confidence score). This modularity is deliberate: it confines domain-specific choices to the minimum necessary while preserving a consistent detection framework. In the wind turbine domain, where SCADA data lack the bandwidth for direct vibration analysis, a lightweight complementary detection channel (a temperature-based Normal Behaviour Model) is added alongside the Lomb-Scargle base layer, demonstrating that the architecture supports incremental extension when the base layer alone falls short.
+
+The pipeline's core employs the coefficient of variation (CV) of detected peak frequencies across overlapping time windows as a stability metric, combined with bootstrap resampling for non-parametric error estimation and a composite confidence score. None of these components are novel individually; the contribution lies in their combination into a single transferable pipeline and the systematic cross-domain validation that demonstrates where the approach works and where it does not.
+
+The cross-domain results span seven orders of magnitude in frequency, from millihertz stellar pulsations to hundreds-of-hertz bearing defect signatures. On the domains tested, the pipeline detects 6 of 8 CWRU bearing fault conditions with 0.21\% mean frequency error, extracts building natural frequencies with 0.13\% mean error, tracks volcanic tremor evolution across four eruptions, identifies all 24 tidal constituent detections as \textsc{confirmed} across six NOAA stations, and monitors progressive structural damage across 23 damage phases of the Z24 bridge benchmark. It also exhibits well-characterised failure modes: it misses two weak or masked bearing fault signatures that conventional envelope analysis detects, and scores 20\% below an autoencoder baseline on the CARE wind turbine benchmark. These failures are instructive: they delineate where domain-specific methods remain necessary and where a generic approach provides sufficient capability.
+
+An empirical observation across all domains is that the CV of detected frequencies clusters into physically interpretable bands: below 0.03\% for mechanical systems with fixed geometry, approximately 0.17\% for gravitationally driven tidal oscillation, 0.4--1\% for structural resonance (varying with excitation type), and 1--27\% for volcanic tremor with evolving source conditions. We report this as an empirical finding, not a theoretical claim; the CV bands were not specified in advance, and we do not assert that they constitute a universal discriminator applicable to all possible domains. What they do provide is a consistent, domain-agnostic measure of signal reliability across the domains tested. Three negative control domains (cryptocurrency market data, heart rate variability, and sunspot numbers) confirm that the CV metric correctly identifies non-physics-constrained signals, producing values of 2.97--71.9\% that are consistently separated from the physics-constrained band.
+
+The contributions of this work are:
+\begin{enumerate}
+  \item A general-purpose signal detection pipeline, based on established spectral methods, demonstrated to transfer across six domains with minimal adaptation and competitive performance in each.
+  \item Systematic cross-domain validation with honest characterisation of failure modes, establishing where the generic approach is sufficient and where domain-specific methods remain necessary.
+  \item Application to the Z24 bridge progressive damage benchmark, demonstrating that the pipeline tracks real structural damage through 23 phases of controlled deterioration, with the structural CV measurements filling a gap in the cross-domain stability hierarchy between ambient-excited bridges (0.4\%) and earthquake-excited buildings (1\%).
+  \item A cross-domain dataset of CV stability measurements spanning six physical domains and three negative control domains, providing an empirical reference for the stability characteristics of physics-constrained periodic signals and confirming the discriminative capacity of the CV metric across a gradient from deterministic to stochastic forcing.
+\end{enumerate}
+
+% ──────────────────────────────────────────────────────────
+\subsection{Related Work}
+\label{sec:related-work}
+% ──────────────────────────────────────────────────────────
+
+The individual components of the Ab Astris pipeline draw on well-established methods. The Lomb-Scargle periodogram was developed for astronomical time series analysis \citep{Lomb1976,Scargle1982} and later generalised with floating-mean and weighted formulations \citep{Zechmeister2009}. \citet{VanderPlas2018} provides a comprehensive practical guide. While the method is standard in astronomy, its application outside astrophysics remains limited, as most engineering vibration analysis relies on the FFT and its windowed variants, which assume uniform sampling.
+
+For planetary transit detection specifically, the Box Least Squares (BLS) algorithm \citep{Kovacs2002} is the standard method, fitting periodic box-shaped dips rather than sinusoidal models. The Ab Astris pipeline substitutes BLS for Lomb-Scargle in its transit search branch (\Cref{sec:pipeline}), representing the single case where the core spectral estimation method is replaced rather than reparameterised.
+
+Cross-domain transfer in condition monitoring has received substantial attention in the deep learning literature, primarily through domain adaptation techniques that align feature distributions between source and target domains \citep{Li2020,Zhao2021}. These approaches transfer learned representations between different operating conditions or machine types within a single domain (e.g., bearing-to-bearing or gearbox-to-gearbox transfer). The present work differs in scope: rather than transferring learned features, it applies the same algorithmic pipeline, without any learned components in the detection stage, across fundamentally different physical domains.
+
+Bearing fault diagnosis using the CWRU benchmark dataset has been extensively studied. The standard approach combines envelope analysis with spectral estimation to isolate characteristic defect frequencies \citep{Randall2011}. Recent work has increasingly applied deep learning to raw vibration signals \citep{Zhang2018}, but the envelope-based approach remains the reference for interpretable diagnosis. Our comparison against envelope analysis (\Cref{sec:bearings}) is positioned against this established baseline.
+
+Volcanic tremor analysis conventionally relies on spectrogram-based methods and real-time seismic amplitude measurement (RSAM) for eruption monitoring \citep{McNutt1996}. The Ab Astris approach to volcanic tremor provides automated frequency tracking with quantified stability, complementing rather than replacing existing observatory workflows.
+
+Tidal analysis of sea level records conventionally employs harmonic analysis methods that decompose observed water levels into known tidal constituents with predetermined frequencies \citep{Foreman1977}. The Lomb-Scargle periodogram has been applied to tide gauge data with gaps \citep{Erol2011}, and wavelet methods have been used for non-stationary tidal analysis \citep{Flinchem2000}. The Ab Astris application to tide gauge data differs in applying the full multi-window CV stability framework to tidal constituents, providing a quantified stability measure that positions tidal signals within the broader cross-domain hierarchy.
+
+Structural health monitoring through natural frequency tracking has a long history. The Z24 bridge in Switzerland is among the most extensively studied benchmark structures, having been subjected to controlled progressive damage (pier settlement) before demolition in 1998 as part of the European SIMCES project coordinated by KU~Leuven \citep{DeRoeck2003,Maeck2003,Reynders2015}. \citet{Peeters2001} demonstrated the confounding effect of environmental conditions (particularly temperature) on natural frequencies, a challenge that any frequency-based monitoring system must address, and \citet{Reynders2014} subsequently developed nonlinear system identification techniques for eliminating such environmental influences. The Ab Astris application to Z24 differs from conventional operational modal analysis approaches in that the same pipeline applied to bearing vibrations and volcanic tremor is applied to the bridge data with only preprocessing parameter changes, providing a cross-domain consistency test rather than a specialised structural analysis.
+
+The remainder of this paper is organised as follows. \Cref{sec:methodology} describes the pipeline methodology and the CV metric. \Cref{sec:results} presents the cross-domain results, with per-domain subsections comparing performance against domain-specific benchmarks. \Cref{sec:discussion} discusses the implications, limitations, and positioning of the approach.
+
+
+% ══════════════════════════════════════════════════════════
+\section{Methodology}
+\label{sec:methodology}
+% ══════════════════════════════════════════════════════════
+
+The Ab Astris pipeline applies a five-stage signal detection process that is identical across domains, with domain adaptation limited to preprocessing parameters. This section describes each stage, the CV stability metric, and the domain adaptation strategy.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Detection Pipeline}
+\label{sec:pipeline}
+% ──────────────────────────────────────────────────────────
+
+The core pipeline transforms a raw time-domain signal into a confidence-scored periodic detection through five stages:
+
+\paragraph{Stage 1: Preprocessing.} A domain-appropriate bandpass filter isolates the frequency range of interest. Filter parameters vary by domain (\Cref{tab:params}) but the filter type is uniform: a 4th-order Butterworth IIR filter applied in both forward and reverse directions for zero phase distortion. The Hilbert envelope is then extracted to demodulate amplitude-modulated signatures; for example, bearing defect impulses that modulate a high-frequency carrier, or volcanic tremor amplitude variations superimposed on a quasi-periodic waveform.
+
+\paragraph{Stage 2: Spectral estimation.} The Lomb-Scargle periodogram is computed on each analysis window. Unlike the discrete Fourier transform, the Lomb-Scargle method handles unevenly sampled data natively and provides a formal false alarm probability (FAP) for each spectral peak based on the null hypothesis of pure Gaussian noise. The frequency grid uses 10{,}000 points (5{,}000 for multi-window sub-analyses) logarithmically spaced over the domain-specific frequency range. The choice of Lomb-Scargle over the FFT is motivated by two practical considerations: astronomical time series are inherently unevenly sampled due to observing gaps, and the method's built-in significance testing provides a domain-agnostic detection threshold.
+
+\paragraph{Transit search variant.} For the specific task of detecting planetary transits (brief, periodic brightness dips with box-shaped morphology), the Lomb-Scargle periodogram in Stage~2 is replaced by the Box Least Squares (BLS) algorithm \citep{Kovacs2002}. BLS models the light curve as a two-level step function (in-transit and out-of-transit), optimising over period, transit epoch, and fractional transit duration to maximise the signal residue (SR). This substitution is physically motivated: the Lomb-Scargle periodogram fits sinusoidal models and is well suited to the smooth brightness variations of pulsating and eclipsing variable stars, but systematically underestimates the significance of the sharp, flat-bottomed dips produced by planetary transits. The remaining pipeline stages (multi-window validation, bootstrap error estimation, and confidence scoring) are applied identically to BLS detections. This is the only case in the cross-domain pipeline where the spectral estimation method itself is substituted rather than merely reparameterised.
+
+\paragraph{Stage 3: Multi-window validation.} The signal is divided into overlapping windows and the periodogram is computed independently for each. Window count ranges from 4 to 8 depending on domain and signal duration (\Cref{tab:params}), with 50\% overlap between adjacent windows. For each window, the highest-significance spectral peak is identified. The coefficient of variation (CV) of these peak frequencies across windows quantifies stability:
+\begin{equation}
+  \CV = \frac{\sigma_f}{\bar{f}} \times 100\%,
+  \label{eq:cv}
+\end{equation}
+where $\bar{f}$ is the mean detected frequency and $\sigma_f$ is the standard deviation across windows. An outlier-removal step excludes frequencies more than $2\sigma$ from the mean before computing the final CV. The detection rate is computed as the fraction of windows in which the detected peak falls within 15\% of the global peak frequency.
+
+\paragraph{Stage 4: Bootstrap error estimation.} The data within each analysis window are resampled with replacement 100 times, and the Lomb-Scargle periodogram is computed on each resample. The resulting distribution of peak frequencies provides a non-parametric confidence interval for the detected frequency, independent of any distributional assumptions.
+
+\paragraph{Stage 5: Confidence scoring.} A composite score (0--100) integrates four components that assess complementary aspects of detection quality (\Cref{tab:confidence}).
+
+\begin{table}[htbp]
+\centering
+\caption{Confidence score components, shown with SHM frequency range thresholds. Component weights, CV thresholds, FAP thresholds, and detection rate scaling are fixed across all domains; only the frequency range bounds in the first component vary by domain (\Cref{sec:adaptation}). Tiers: \textsc{confirmed} $\geq 80$, \textsc{probable} $\geq 60$, \textsc{candidate} $\geq 40$, \textsc{noise} $< 40$.}
+\label{tab:confidence}
+\smallskip
+\begin{tabular}{lll}
+\toprule
+\textbf{Component} & \textbf{Weight} & \textbf{Thresholds} \\
+\midrule
+Frequency range   & 30\,pts & In expected (1--10\,Hz): 30; extended (0.5--20\,Hz): 15; outside: 0 \\
+FAP significance  & 25\,pts & $<10^{-10}$: 25; $<10^{-5}$: 20; $<10^{-3}$: 15; $<0.01$: 10; $<0.05$: 5 \\
+CV stability      & 25\,pts & $<0.5\%$: 25; $<1\%$: 20; $<3\%$: 15; $<5\%$: 10; $<10\%$: 5 \\
+Detection rate    & 20\,pts & Linear: $20 \times \text{detection\_rate}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The physical range component rewards detections falling within the expected frequency band for the domain, penalising spectral peaks that are technically significant but physically implausible. The FAP significance component captures the statistical strength of the detection against a noise null hypothesis. The CV stability component rewards temporal consistency. The detection rate component rewards ubiquity: a signal present in most or all windows is more likely to represent a persistent physical phenomenon.
+
+Detections are classified into confidence tiers (\textsc{confirmed}, \textsc{probable}, \textsc{candidate}, \textsc{noise}) based on the composite score, with thresholds adjusted between scoring variants to reflect the noise and complexity of different measurement contexts.
+
+\begin{table}[htbp]
+\centering
+\caption{Domain-specific preprocessing parameters. $^*$Envelope analysis bandpass; Ab Astris generic pipeline operates on raw signal. $^\dagger$No bandpass filter or Hilbert envelope applied; tidal frequencies are the primary signal.}
+\label{tab:params}
+\smallskip
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Parameter} & \textbf{Astronomy} & \textbf{Bearings} & \textbf{Volcanic} & \textbf{Oceanography} & \textbf{Wind turbines} & \textbf{Structural} \\
+\midrule
+Sampling rate      & ${\sim}$2\,min & 12{,}000\,Hz & 100\,Hz    & 1/hr$^\dagger$  & 6/hr        & 50--200\,Hz \\
+Bandpass (Hz)      & N/A            & 1{,}000--5{,}000$^*$ & 0.8--12.0 & ---$^\dagger$ & 1/720--0.5  & 0.05--25.0 \\
+Freq grid pts      & 10{,}000       & 10{,}000     & 10{,}000   & 10{,}000        & 5{,}000     & 10{,}000 \\
+Multi-window $n$   & 8              & 8            & 6          & 8               & 4           & 6 \\
+Window overlap     & 50\%           & 50\%         & 50\%       & 50\%            & ---         & 50\% \\
+Snapshot dur.      & Full LC        & Full rec.    & 60\,s      & Full year       & 168\,hr     & Full rec. \\
+Filter             & ---            & Butter 4th   & Butter 4th & ---$^\dagger$   & ---         & Butter 4th \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ──────────────────────────────────────────────────────────
+\subsection{The CV Stability Metric}
+\label{sec:cv-metric}
+% ──────────────────────────────────────────────────────────
+
+The central empirical observation motivating this work is that the CV of detected frequencies separates physics-constrained systems from stochastic ones across all tested domains without domain-specific threshold tuning (\Cref{fig:periodograms}, in \Cref{sec:results}, illustrates the spectral character underlying this separation).
+
+Mechanical systems with fixed geometry (rolling-element bearings, healthy building structures) produce CV values below 0.03\%, reflecting the stability of resonant frequencies determined by mass and stiffness distributions that do not change on measurement timescales. Gravitationally driven tidal oscillation produces CV of approximately 0.17\%, reflecting the high determinism of orbital forcing modulated by local oceanographic effects. Structural resonance produces CV of 0.4--1\%, with the range depending on excitation type: ambient vibration (traffic, wind) produces lower CV (${\sim}$0.4\%) than earthquake excitation (${\sim}$1\%), consistent with the difference in stationarity between continuous and transient forcing. Volcanic tremor occupies the 1--27\% range, reflecting the genuine physical evolution of magmatic and hydrothermal source conditions.
+
+We emphasise that these ranges are observed, not derived from first principles. The CV metric is an empirical stability measure that happens to produce interpretable and consistent results across the domains tested. We do not claim it constitutes a universal law, nor do we assert that the observed thresholds will necessarily hold in domains not yet evaluated. What the cross-domain consistency does suggest is that the CV captures something general about the distinction between deterministic periodic forcing and stochastic fluctuation, a distinction that is physically meaningful regardless of domain.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Domain Adaptation}
+\label{sec:adaptation}
+% ──────────────────────────────────────────────────────────
+
+Domain adaptation comprises three elements: the bandpass frequency range, the analysis window parameters (count and duration), and the physical plausibility bounds in the confidence score's frequency range component (\Cref{tab:confidence}). The frequency range thresholds are necessarily domain-specific: a 100\,Hz bearing defect frequency cannot be scored against a 1--10\,Hz structural range. All other algorithmic parameters---including the confidence score component weights, the CV stability thresholds, the FAP significance thresholds, the detection rate scaling, the Lomb-Scargle grid density, the bootstrap resample count, and the CV outlier threshold---are fixed across domains.
+
+This limited adaptation is deliberate. The bandpass range must vary because bearing defect frequencies (${\sim}$100\,Hz) and volcanic tremor frequencies (${\sim}$1\,Hz) occupy different spectral bands, and applying a single passband would either miss the signal or be dominated by out-of-band noise. Similarly, the analysis window duration must reflect the stationarity timescale of the phenomenon: 60-second snapshots are appropriate for volcanic tremor that evolves over hours, while 7-day windows suit the weekly operational cycles visible in wind turbine SCADA data.
+
+The important claim is not that zero adaptation is required, but that the adaptation is confined to physically motivated preprocessing and scoring range choices, while the detection algorithm, stability metric, and confidence score structure remain identical.
+
+
+% ══════════════════════════════════════════════════════════
+\section{Cross-Domain Results}
+\label{sec:results}
+% ══════════════════════════════════════════════════════════
+
+The Ab Astris pipeline was applied to six domains using the modular architecture described in \Cref{sec:methodology}. In five domains, the default Lomb-Scargle front-end was used without modification; in the sixth (planetary transits), the BLS substitution was applied. Domain adaptation was otherwise limited to preprocessing parameters (bandpass ranges, window counts, snapshot durations) and confidence score frequency bounds appropriate to each measurement context. This section presents results in each domain, compares performance against domain-specific methods where benchmarks exist, and characterises the boundaries of the approach.
+
+\Cref{tab:summary} summarises the principal results. The pipeline achieves competitive detection performance across domains spanning seven orders of magnitude in frequency, from millihertz stellar pulsations to hundreds-of-hertz bearing defect signatures. \Cref{fig:periodograms} illustrates the qualitative spectral signatures across the six representative domains discussed in the following subsections.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-domain summary. $^*$6/8 conditions; 2 missed. $^{**}$Snapshot-level CV range; per-volcano means 9.30--10.23\%. $^\dagger$CV not directly applicable to CARE scoring. $^{\dagger\dagger}$Per-constituent CV range; S2 = 0.00\%, O1 = 0.51\%; per-station means 0.135--0.204\%. $^\ddagger$Main cluster; outlier fraction increases with damage. $^\S$Negative control domains.}
+\label{tab:summary}
+\smallskip
+\footnotesize
+\begin{tabular}{lllllp{3.2cm}}
+\toprule
+\textbf{Domain} & \textbf{Dataset} & \textbf{Freq.\ range} & \textbf{CV (\%)} & \textbf{Det.\ rate} & \textbf{Key result} \\
+\midrule
+Astronomy  & TESS (2{,}947 cand.) & ${\sim}$mHz  & 0.001--0.01  & 100\%      & 93\% Fetherolf agree.; 5/5 VSX \\
+Bearings   & CWRU (8 cond.)      & 30--162\,Hz  & 0.005--0.027 & 100\%$^*$  & 6/8 det., 0.21\% err \\
+Volcanic   & IRIS/FDSN (4 volc.) & 0.5--5\,Hz   & 0.29--26.88$^{**}$  & 54--68\%   & 913 snapshots \\
+Oceanog.   & CO-OPS (6 stn)      & ${\sim}10^{-5}$\,Hz & 0.00--0.51$^{\dagger\dagger}$ & 100\%      & 24/24 conf., 0.005\% err \\
+Wind turb. & CARE (3 farms)      & SCADA        & ---$^\dagger$ & ---        & 0.527 CARE score \\
+Structural & CESMD (4 bldgs)     & 0.5--25\,Hz  & 1.00--1.04   & 100\%      & 0.13\% freq error \\
+Structural & Z24 (23 phases)     & 0.5--25\,Hz  & 0.43$^\ddagger$ & 98\%    & 3{,}678 meas., 814 conf. \\
+\midrule
+Sunspots$^\S$   & SILSO (1749--2024)  & ${\sim}$0.09\,cpy & 2.97--5.33 & 50--83\%  & Chaotic, not periodic \\
+HRV$^\S$        & PhysioNet (6 subj.) & 0.003--0.4\,Hz    & 11.6--21.5 & ---       & Biological regulation \\
+Crypto$^\S$     & BTC/ETH (2023)      & ---                & 53.0--71.9 & 0\%       & NOISE tier \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig1_periodogram_panel.pdf}
+\caption{Representative Lomb-Scargle periodograms across six domains, illustrating the spectral signatures that produce the cross-domain CV gradient. Physics-constrained systems (a--c) produce sharp, isolated peaks with low CV; quasi-periodic and biologically regulated systems (d--e) produce broader spectral features with higher CV; stochastic systems (f) produce no detectable peak above the false alarm probability (FAP) threshold. All panels show periodograms computed from real data: (a)~CWRU bearing dataset, inner race fault 0.007\textquotedbl{}, drive end accelerometer at 12{,}000\,Hz; (b)~NOAA CO-OPS tide gauge station 9414290 (San Francisco), 8{,}737 hourly observations from 2023; (c)~Z24 bridge Phase~01 healthy baseline, ambient vibration at 100\,Hz; (d)~Kilauea 2018 eruption, IRIS/FDSN station HV.UWE.HHZ, 60-second tremor snapshot; (e)~PhysioNet Normal Sinus Rhythm Database, subject nsr001, 24-hour Holter recording; (f)~Bitcoin daily closing prices (CoinGecko API). Frequency axes are scaled per panel to accommodate the seven-orders-of-magnitude range across domains.}
+\vspace{-1em}
+\label{fig:periodograms}
+\end{figure}
+
+% ──────────────────────────────────────────────────────────
+\subsection{Variable Star Astronomy}
+\label{sec:astronomy}
+% ──────────────────────────────────────────────────────────
+
+The Ab Astris pipeline was originally developed for variable star discovery using photometric time series from NASA's Transiting Exoplanet Survey Satellite (TESS). This domain provides the strongest validation evidence because the astronomical community maintains independent catalogues against which automated discoveries can be verified.
+
+From a systematic survey of 60{,}638 TESS targets (TIC objects), the pipeline identified 2{,}947 periodic variable star candidates. Of these, 556 are present in the Fetherolf TESS Stellar Variability Catalog \citep{Fetherolf2023}, an independent automated pipeline applied to the same TESS dataset with different detection methodology. This overlap set provides a direct algorithmic cross-validation at scale: of the 556 mutual detections, 517 (93.0\%) show period agreement, comprising 489 direct matches (mean fractional difference 0.097\%, median 0.022\%) and 28 harmonic agreements (27 at 2$\times$, one at 3$\times$). The 39 disagreements (7.0\%) represent cases where the two pipelines detect different dominant periods in the same star, expected given their differing spectral estimation approaches and detection thresholds. Critically, the novel candidate subset (stars absent from all 20 catalogues surveyed) shows zero overlap with the Fetherolf catalog, independently confirming that these objects have no prior variability record in any major TESS analysis.
+
+A subset of 843 candidates from this survey were subjected to an extended cross-match against 20 public variability catalogues---spanning VSX, Gaia~DR3, ASAS-SN, ZTF, ATLAS, SIMBAD, the General Catalogue of Variable Stars (GCVS), Catalina Sky Survey (CSS), Pan-STARRS, Hipparcos, two TESS-specific variability catalogues, and others. This cross-match reclassified 13 candidates initially designated as novel, which were independently recovered in existing catalogues (ATLAS, ZTF, ASAS-SN, Gaia~DR3, GCVS, and the TESS Stellar Variability Catalog). The remaining 107 candidates in this subset are absent from all 20 catalogues surveyed and are designated previously unreported variable stars.
+
+The cross-match results are summarised in \Cref{tab:astro} at the end of this subsection.
+
+The strongest validation evidence comes from the 556-object overlap with the Fetherolf TESS Stellar Variability Catalog, an independent automated survey of the same TESS dataset. Of these 556 mutual detections, 489 are direct period matches with a mean fractional difference of 0.097\% (median 0.022\%), and 28 are harmonic agreements (27 at 2$\times$, one at 3$\times$). The 2$\times$ harmonic matches, where the pipeline detects the half-period of an eclipsing binary, are a physically correct result: eclipsing binaries produce two brightness minima per orbit, and the Lomb-Scargle periodogram naturally locks onto the dominant half-period signal. The 93.0\% overall agreement rate with an independent detection pipeline using different methodology constitutes the primary algorithmic validation of the Ab Astris approach at scale.
+
+Five candidates were submitted to the AAVSO's VSX catalogue and accepted at a 100\% rate, representing expert community validation. Two additional candidates were identified using the BLS transit search variant (\Cref{sec:pipeline}) and submitted to Caltech's Exoplanet Follow-up Observing Program (ExoFOP) as community TESS Objects of Interest (cTOI). The BLS detections exhibited box-shaped flux dips with signal residue values exceeding the noise threshold across multiple transit epochs, consistent with planetary transit morphology. These submissions represent the pipeline's only application of the BLS substitution in production, and their acceptance into ExoFOP provides independent validation that the transit search branch produces credible candidates.
+
+Cross-matching all 2{,}947 discoveries against the Gaia DR3 variability tables (covering six specialised catalogues: \texttt{vari\_classifier\_result}, \texttt{vari\_eclipsing\_binary}, \texttt{vari\_rrlyrae}, \texttt{vari\_cepheid}, \texttt{vari\_rotation\_modulation}, and \texttt{vari\_long\_period\_variable}) identified 1{,}120 (38.0\%) as classified variables in Gaia. Of the 658 with comparable Gaia periods, 482 (73.3\%) agree with the Ab Astris detections. The agreement pattern is dominated by 2$\times$ harmonic matches (458 of 482): Gaia's \texttt{vari\_eclipsing\_binary} reports orbital periods, while the Lomb-Scargle periodogram detects the dominant half-period (eclipse-to-eclipse interval), a physically correct and expected difference. The 62.0\% of Ab Astris discoveries not present in Gaia DR3 variability tables reflects TESS's superior photometric precision for short-period variables, consistent with the 840-of-843 result from the sub-survey.
+
+Cross-matching against three ground-based surveys---ASAS-SN Variable Stars Database \citep{Jayasinghe2018}, the ZTF Catalog of Periodic Variable Stars \citep{Chen2020}, and the ATLAS Variable Stars catalogue \citep{Heinze2018}---recovered 1{,}160 (39.4\%) of discoveries, with period agreement rates of 59.4\%, 72.5\%, and 76.2\% respectively (combined 66.1\%, again dominated by expected EB harmonic matches). Combined across all four external sources (Gaia DR3, ASAS-SN, ZTF, ATLAS), 1{,}563 of 2{,}947 discoveries (53.0\%) appear in at least one catalogue; 1{,}384 (47.0\%) are not flagged as variable in any catalogue checked.
+
+The 107 novel candidates (absent from all 20 variability databases in the sub-survey) were also checked against the full set of ground-based and Gaia sources. Seven have some external detection: two are classified by Gaia at low confidence with period disagreements, and five have ATLAS or ZTF detections with no published period. Crucially, \emph{none} of the 107 have prior period measurements in any external catalogue, confirming their status as first periodic characterisations: 100 are entirely absent from all external sources, and the remaining 7 represent cases where surveys detected variability without characterising its period. No reclassification of the novel subset is warranted.
+
+\begin{table}[htbp]
+\centering
+\caption{Astronomy evidence pyramid (\Cref{sec:astronomy}). Fetherolf cross-validation covers the 556-object overlap between the Ab Astris survey (2{,}947 candidates, 60{,}638 TICs) and the independent Fetherolf TESS Stellar Variability Catalog \citep{Fetherolf2023}. Gaia DR3 and ground-based results are for the full 2{,}947-candidate survey. Novel count (107) from extended cross-match against 20 public variability catalogues applied to the 843-candidate sub-survey.}
+\label{tab:astro}
+\smallskip
+\begin{tabular}{lrl}
+\toprule
+\textbf{Evidence tier} & \textbf{Count} & \textbf{Significance} \\
+\midrule
+\multicolumn{3}{l}{\textit{Expert and algorithmic validation}} \\
+VSX accepted (AAVSO)                & 5     & 100\% acceptance by community experts \\
+cTOI planet candidates              & 2     & Transit detection precision \\
+Fetherolf direct agreement          & 489   & Independent pipeline, mean $\Delta P = 0.097\%$ \\
+Fetherolf harmonic (2$\times$/3$\times$) & 28 & Physically correct EB half-period \\
+Fetherolf agreement rate            & 93.0\%& 517/556 mutual detections \\
+\midrule
+\multicolumn{3}{l}{\textit{Space-based cross-matching (full 2,947-candidate survey)}} \\
+In Gaia DR3 variability             & 1{,}120 & 38.0\%; 482/658 with periods agree (73.3\%) \\
+Not in Gaia DR3 variability         & 1{,}827 & 62.0\% not flagged by Gaia \\
+\midrule
+\multicolumn{3}{l}{\textit{Ground-based cross-matching}} \\
+Any ground-based match              & 1{,}160 & 39.4\%; ASAS-SN 59.4\%, ZTF 72.5\%, ATLAS 76.2\% \\
+\midrule
+\multicolumn{3}{l}{\textit{Combined coverage}} \\
+In any external catalogue           & 1{,}563 & 53.0\% of full survey \\
+Not in any catalogue                & 1{,}384 & 47.0\%; no prior variability record \\
+Novel (sub-survey, unconfirmed)     & 107   & No prior variability in 20 databases \\
+\quad -- entirely absent            & 100   & Zero external detection of any kind \\
+\quad -- flagged but no period      &   7   & Ground/Gaia detect variability, no period \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ──────────────────────────────────────────────────────────
+\subsection{Bearing Fault Detection}
+\label{sec:bearings}
+% ──────────────────────────────────────────────────────────
+
+The Case Western Reserve University (CWRU) bearing dataset is the most widely used benchmark in vibration-based condition monitoring \citep{Smith2015}. It comprises accelerometer recordings from a test rig operating at approximately 1{,}797\,RPM, with seeded faults of three severities (0.007\textquotedbl{}, 0.014\textquotedbl{}, and 0.021\textquotedbl{}{} diameter) at three locations: inner race, outer race, and rolling element (ball).
+
+The Ab Astris pipeline was applied to all 8 conditions (including the normal baseline) without domain-specific preprocessing. In standard practice, bearing fault diagnosis employs envelope analysis (high-frequency bandpass filtering followed by amplitude demodulation) to isolate the characteristic defect frequencies (BPFI, BPFO, BSF) from the raw vibration signal. The Ab Astris pipeline omits this domain-specific step, applying only the generic Lomb-Scargle and multi-window validation stages.
+
+\begin{table}[htbp]
+\centering
+\caption{CWRU bearing results. AA = Ab Astris (generic); Env = Envelope + FFT (domain-specific).}
+\label{tab:cwru}
+\smallskip
+\small
+\begin{tabular}{llrrrrrr}
+\toprule
+\textbf{Condition} & \textbf{Fault} & \textbf{Target} & \textbf{AA} & \textbf{AA err} & \textbf{AA CV} & \textbf{Env err} & \textbf{Env SNR} \\
+                   &                & \textbf{(Hz)}   & \textbf{(Hz)} & \textbf{(\%)} & \textbf{(\%)} & \textbf{(\%)} & \textbf{(dB)} \\
+\midrule
+Normal      & Shaft & 29.95  & 29.931  & ---  & 0.027 & 0.14 & 45.1 \\
+IR 0.007\textquotedbl{} & BPFI & 162.19 & 161.671 & 0.32 & 0.005 & 0.30 & 49.7 \\
+IR 0.014\textquotedbl{} & BPFI & 162.10 & 162.025 & 0.04 & 0.009 & 0.05 & 42.5 \\
+IR 0.021\textquotedbl{} & BPFI & 162.19 & 161.876 & 0.19 & 0.010 & 0.23 & 43.1 \\
+OR 0.007\textquotedbl{} & BPFO & 107.31 & 107.646 & 0.32 & 0.009 & 0.29 & 55.9 \\
+OR 0.014\textquotedbl{} & BPFO & 107.31 & MISS    & ---  & ---   & 0.68 & 15.8 \\
+OR 0.021\textquotedbl{} & BPFO & 107.31 & 107.497 & 0.18 & 0.006 & 0.21 & 44.2 \\
+Ball 0.007\textquotedbl{} & BSF & 70.55 & MISS    & ---  & 0.044 & 1.86 & 24.4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Bearing fault detection: method comparison summary.}
+\label{tab:cwru-comparison}
+\smallskip
+\begin{tabular}{llrl}
+\toprule
+\textbf{Method} & \textbf{Detected} & \textbf{Mean freq err (\%)} & \textbf{Notes} \\
+\midrule
+Ab Astris (generic)  & 6/8 & 0.21 & Better precision on detected faults \\
+Envelope + FFT       & 8/8 & 0.47 & Domain-specific preprocessing \\
+Envelope + LS        & 8/8 & 0.44 & LS improves frequency resolution \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pipeline correctly identified 6 of 8 conditions with a mean frequency error of 0.21\% and mean CV of 0.008\%, placing bearing faults among the most stable physics-constrained signals validated (\Cref{tab:cwru}). The two missed conditions are instructive:
+
+The OR~0.014\textquotedbl{}{} condition was dominated by a structural resonance at 179.2\,Hz, masking the outer race defect frequency at 107.3\,Hz. Envelope analysis, which demodulates the high-frequency resonance band, recovers the defect frequency at 15.8\,dB SNR, the lowest SNR in the dataset. The Ball~0.007\textquotedbl{}{} condition represents the weakest fault signature, where the pipeline detected the shaft rotation frequency (29.9\,Hz) instead of the ball spin frequency (70.5\,Hz). Envelope analysis detects the correct frequency, though at a relatively high error of 1.9\%.
+
+The result establishes a clear trade-off (\Cref{tab:cwru-comparison}): the generic pipeline sacrifices sensitivity to weak or masked faults in exchange for domain independence and superior frequency precision on detectable signals. For the two missed conditions, domain-specific envelope preprocessing remains necessary.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Volcanic Tremor Monitoring}
+\label{sec:volcanic}
+% ──────────────────────────────────────────────────────────
+
+Volcanic tremor (sustained seismic oscillation driven by fluid movement through conduits, resonance of magma bodies, or repeated brittle failure) produces quasi-periodic signals in the 0.5--5\,Hz band that evolve as eruption conditions change. The Ab Astris pipeline was applied to seismic waveform data from four eruptions retrieved via the IRIS/FDSN web services.
+
+Each eruption was divided into 60-second analysis snapshots, with Lomb-Scargle periodograms and multi-window CV computed for each snapshot independently. This approach tracks how tremor frequency and stability evolve over the course of an eruption.
+
+\begin{table}[htbp]
+\centering
+\caption{Per-volcano tremor summary. $^*$Kilauea early warning negative (tremor detected after eruption onset).}
+\label{tab:volcanic}
+\smallskip
+\small
+\begin{tabular}{llllrll}
+\toprule
+\textbf{Volcano} & \textbf{Year} & \textbf{Type} & \textbf{Snapshots} & \textbf{CV mean (\%)} & \textbf{Det.\ rate} & \textbf{Early warn (hr)} \\
+\midrule
+Kilauea       & 2018 & Effusive + collapse  & 272 & 10.23 & 54.1\% & ---$^*$ \\
+Mt St Helens  & 2004 & Dome-building        & 255 & 10.00 & 58.4\% & 612 \\
+Pavlof        & 2016 & Vulcanian            & 180 &  9.30 & 62.8\% & 1{,}003 \\
+Augustine     & 2006 & Explosive$\to$effusive & 206 & 9.95 & 67.6\% & 1{,}374 \\
+\midrule
+Total         &      &                      & 913 &  9.87 &        & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Across 913 snapshots and 679 valid CV measurements from four volcanoes, the mean CV was 9.87\%, with a range of 0.29--26.88\% (\Cref{tab:volcanic}). This is one to three orders of magnitude higher than the mechanical systems (bearings: 0.008\%, structural: 0.4--1.0\%), reflecting the physically meaningful instability of volcanic tremor sources. Magmatic and hydrothermal conditions evolve continuously: conduit geometry changes, gas content fluctuates, and new fracture pathways open, producing frequency variations that are real geophysical signals rather than measurement noise.
+
+The pipeline's detection rates per volcano (54--68\%) are lower than in the mechanical domains, which is expected: not every 60-second snapshot during a multi-month eruption window contains detectable tremor. The detection rate itself carries information: periods of elevated detection rate correspond to periods of increased volcanic activity.
+
+The per-volcano early warning times are notable. At Mt St Helens, Pavlof, and Augustine, the pipeline detected sustained tremor 612 to 1{,}374 hours before the eruption onset defined in observatory records. These early warning times should be interpreted cautiously; they reflect the first detection of elevated periodic activity, not a prediction of eruption timing, but they demonstrate that the pipeline's sensitivity is sufficient to identify precursory tremor in real seismic data.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Wind Turbine Drivetrain Monitoring}
+\label{sec:wind}
+% ──────────────────────────────────────────────────────────
+
+Wind turbine condition monitoring differs from the preceding domains in an important respect: the available data are 10-minute averaged SCADA signals (temperatures, power output, rotational speed) rather than raw vibration waveforms. The periodic signatures accessible from SCADA data are therefore low-frequency operational patterns (diurnal, weekly) rather than bearing defect frequencies. This domain provides the clearest test of the modular architecture described in \Cref{sec:pipeline}: the Lomb-Scargle base layer operates on the same fixed core as all other domains, and a lightweight complementary channel is added to address the specific limitations of indirect SCADA-based monitoring.
+
+The TorqueScope module implements this two-layer design: Lomb-Scargle periodic analysis provides the primary anomaly detection channel, complemented by a Normal Behaviour Model (NBM) that flags temperature deviations from expected operating envelopes. The NBM adds a small number of configurable parameters (per-sensor regression coefficients and deviation thresholds) and requires no labelled training data---in contrast to the autoencoder baseline, which is trained end-to-end on the benchmark data. A criticality accumulation counter (alarm threshold at 72 consecutive anomalous readings) provides temporal filtering to suppress transient false alarms.
+
+The system was evaluated on the CARE benchmark (Coverage, Accuracy, Reliability, Earliness), which comprises 1{,}300 sensor channels across 3 wind farms and 95 fault events. To isolate the contribution of the Ab Astris methodology, a three-way ablation was conducted (\Cref{tab:care}).
+
+\begin{table}[htbp]
+\centering
+\caption{TorqueScope ablation results.}
+\label{tab:care}
+\smallskip
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Component} & \textbf{CARE} & \textbf{Coverage} & \textbf{Accuracy} & \textbf{Reliability} & \textbf{Earliness} & \textbf{Events} \\
+\midrule
+Periodic only (LS)  & 0.414 & 0.376 & 0.520 & 0.368 & 0.402 & 60 \\
+NBM only (temp)     & 0.355 & 0.176 & 0.951 & 0.398 & 0.124 & 17 \\
+Hybrid (v5)         & 0.527 & 0.441 & 0.823 & 0.571 & 0.401 & 79 \\
+Autoencoder baseline & 0.660 & ---  & ---   & ---   & ---   & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablation reveals that the Lomb-Scargle base layer alone is the stronger individual detection component (CARE score 0.414 vs 0.355 for NBM alone), detecting 3.5$\times$ more fault events (60 vs 17). This is the key finding for the cross-domain argument: the same spectral estimation and multi-window validation applied to bearings and buildings also provides the majority of detection coverage on SCADA data, despite the fundamentally different signal characteristics. The NBM contributes high accuracy (0.951 true negative rate) but limited coverage, consistent with its role as a temperature anomaly detector that fires only when thermal signatures are pronounced.
+
+The hybrid architecture achieves a CARE score of 0.527, with the lightweight NBM extension closing a meaningful portion of the gap between the base layer (0.414) and the autoencoder baseline (0.660). The remaining 20\% gap is non-trivial but should be contextualised. The autoencoder is a black-box deep learning approach trained end-to-end on the benchmark data; TorqueScope uses a physically interpretable model with no training phase and no labelled fault examples. All TorqueScope detections are traceable to specific sensor channels and deviation types, enabling operators to understand the basis for an alarm. The wind turbine domain thus illustrates both the reach and the limits of the modular architecture: the generic base layer provides broad detection coverage, and a small domain-specific addition improves precision, but fully closing the gap to a trained end-to-end model would require abandoning the interpretability that motivates the approach.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Structural Health Monitoring}
+\label{sec:shm}
+% ──────────────────────────────────────────────────────────
+
+The structural domain provides two distinct test cases for the Ab Astris pipeline: frequency extraction from earthquake recordings of real buildings, and progressive damage tracking on a benchmark bridge structure.
+
+\subsubsection{California Buildings (CESMD)}
+\label{sec:cesmd}
+
+For frequency extraction, the pipeline was applied to strong-motion recordings from four California buildings in the CESMD database, with earthquake excitation providing the ambient vibration source. Six LUMO synthetic lattice tower conditions were also analysed as controlled validation.
+
+On the LUMO benchmark, all 6 conditions were detected as \textsc{confirmed} (confidence score~90), with mean frequency error of 0.19\% and CV of 1.00--1.04\%. The slightly elevated CV compared to the mechanical domains (bearing CV ${\sim}$0.008\%) reflects the lower signal-to-noise ratio of structural resonance in broadband earthquake excitation relative to the narrow-band periodic forcing in rotating machinery.
+
+On the four CESMD buildings, the pipeline achieved a mean frequency error of 0.13\% after multi-frequency calibration. The calibration step is critical for real buildings: uniform stiffness assumptions produce incorrect frequency ratios. For example, the 6-storey hotel's measured $f_2/f_1$ ratio of 1.58 differs substantially from the uniform stiffness prediction of 2.94. Without calibration, frequency error was 6.4\%; with it, 0.36\%.
+
+The zero false alarm rate across all four healthy building baselines provides the structural domain's negative control: the pipeline does not hallucinate damage in undamaged structures.
+
+\subsubsection{Z24 Bridge Progressive Damage}
+\label{sec:z24}
+
+The Z24 bridge was a 30-metre pre-stressed concrete box girder highway overpass near Solothurn, Switzerland, that was subjected to controlled progressive damage before demolition in 1998 \citep{Maeck2003,DeRoeck2003,Reynders2015}. The damage protocol included pier settlement, concrete spalling, anchor head failure, and landslide simulation across 24 phases, with continuous ambient vibration monitoring throughout. The dataset, produced as part of the European SIMCES project coordinated by the KU~Leuven Structural Mechanics Section, is widely regarded as the reference benchmark for structural health monitoring research because it provides both controlled damage with known ground truth and the environmental confounding (particularly temperature effects on concrete stiffness) that complicates real-world frequency-based monitoring \citep{Peeters2001,Reynders2014}.
+
+The Ab Astris pipeline was applied to 3{,}678 multi-channel acceleration measurements spanning 23 damage phases (phase~13 is absent from the dataset), using the identical Lomb-Scargle, multi-window validation, and confidence scoring methodology applied to all other domains. The only domain-specific adaptation was the structural bandpass range (0.5--25\,Hz) and 6-window validation, the same parameters used for the CESMD buildings.
+
+Of the 3{,}678 measurements, 814 (22\%) achieved \textsc{confirmed} confidence tier, 2{,}841 (77\%) \textsc{probable}, and 23 (1\%) \textsc{candidate}. The \textsc{confirmed} subset, which forms the basis for the quantitative analysis below, represents measurements where the pipeline identified a stable spectral peak with high statistical significance, low CV, and high detection rate across windows.
+
+\paragraph{Healthy baseline.} The 68 highest-quality Phase~01 measurements (main frequency cluster, 3.5--4.5\,Hz, \textsc{confirmed} tier) yield a fundamental frequency of $f_1 = 3.998 \pm 0.022$\,Hz. The median CV across the 814 confirmed-tier measurements is 0.43\%, while the mean is 0.730\% (95\% CI: 0.637--0.830\%), reflecting right-skew from damage-phase outliers with elevated CV. Both values are consistent with published Z24 natural frequency values from conventional operational modal analysis. The mean CV of 0.730\% places the ambient-excited bridge between the earthquake-excited CESMD buildings (mean CV 1.02\%) and the mechanically driven bearing defect frequencies (mean CV 0.008\%) in the cross-domain stability hierarchy. This ordering is physically expected: ambient excitation (traffic, wind) is more stationary than earthquake excitation but less deterministic than rotating machinery.
+
+\paragraph{Progressive damage tracking.} Across the 23 damage phases, the pipeline tracks frequency changes that correlate with the applied damage protocol. During early damage phases (2--5), the main cluster frequency shows subtle softening of 1--2\% relative to the healthy baseline, though this signal is confounded by temperature effects. Phases~6--7, which correspond to warmer environmental conditions, show frequencies slightly above the Phase~01 baseline ($f_1 \approx 4.01$\,Hz), consistent with the well-documented positive correlation between temperature and concrete stiffness in the Z24 literature \citep{Peeters2001,Reynders2014}. During severe damage phases (10--12, 14, 17, 23), the pipeline detects frequency drops of 40--88\%, with Phase~12 recording $f_1 = 0.48$\,Hz, an 88\% reduction from the healthy baseline reflecting near-complete loss of structural support from pier settlement (\Cref{fig:z24}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig2_z24_tracking.pdf}
+\caption{Z24 bridge fundamental frequency across 23 damage phases (phase~13 absent from dataset). Top: individual \textsc{confirmed}-tier detections (blue circles: main cluster 3.0--4.5\,Hz; red triangles: damage outliers below 3.0\,Hz) with cluster mean $\pm 1\sigma$ trend line. Background shading indicates damage epochs: healthy baseline (green), temperature-confounded period (yellow), severe damage from pier settlement (red), and post-damage phases (grey). Bottom: main cluster membership percentage per phase, showing that severe damage manifests as increased outlier fraction rather than gradual cluster shift.}
+\label{fig:z24}
+\end{figure}
+
+
+\paragraph{Environmental confounding.} The Z24 results illustrate a fundamental challenge for frequency-based structural monitoring: environmental effects (temperature, humidity) produce frequency variations of similar magnitude to early damage. In the Z24 dataset, temperature-driven frequency variation in the healthy baseline is approximately $\pm$0.5\%, while the earliest detectable damage-induced shift is approximately 1--2\%. The Ab Astris pipeline does not include environmental compensation; it reports the frequencies as measured. Distinguishing environmental from damage-induced frequency changes remains a domain-specific problem that the generic pipeline does not address, and this limitation should be understood by any user applying the methodology to structural monitoring.
+
+\paragraph{Detection vs.\ localisation.} The Z24 results demonstrate the pipeline's Tier~1 capability (damage detection through frequency change) on a real progressive damage dataset. The pipeline does not attempt damage localisation (identifying which structural element has been damaged), as this requires a physical model of the specific structure and constitutes a domain-specific inverse problem beyond the scope of a generic detection pipeline.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Oceanographic Tidal Validation}
+\label{sec:oceanography}
+% ──────────────────────────────────────────────────────────
+
+Oceanographic tide gauges provide the strongest available positive control for the Ab Astris pipeline. Tidal constituent frequencies are known to arbitrary precision from orbital mechanics, the signals are persistent and high-amplitude relative to non-tidal variability, and the Lomb-Scargle periodogram's native handling of unevenly sampled data is directly relevant to tide gauge records that commonly contain gaps from instrument maintenance, power outages, and datum changes.
+
+The pipeline was applied to hourly verified water level data from six NOAA CO-OPS tide gauge stations spanning the US Atlantic coast (The Battery, New York; Wilmington, North Carolina), Gulf coast (Key West, Florida), Pacific coast (San Francisco, California; Seattle, Washington), and open ocean (Honolulu, Hawaii). Each station provided 8{,}737 observations for the 2023 calendar year. Four target constituents were analysed: the principal lunar semidiurnal tide M2 (1.9323\,cpd), the principal solar semidiurnal tide S2 (2.0000\,cpd), the lunisolar diurnal tide K1 (1.0027\,cpd), and the principal lunar diurnal tide O1 (0.9295\,cpd).
+
+\begin{table}[htbp]
+\centering
+\caption{Oceanographic tidal validation across 6 NOAA CO-OPS stations (2023). All 24 constituent detections classified as \textsc{confirmed}.}
+\label{tab:tidal}
+\smallskip
+\small
+\begin{tabular}{llrrrr}
+\toprule
+\textbf{Station} & \textbf{Location} & \textbf{Mean CV (\%)} & \textbf{Mean err (\%)} & \textbf{Confidence} & \textbf{Confirmed} \\
+\midrule
+San Francisco & CA (Pacific)     & 0.181 & 0.0047 & 92.5 & 4/4 \\
+The Battery   & NY (Atlantic)    & 0.201 & 0.0042 & 93.8 & 4/4 \\
+Key West      & FL (Gulf)        & 0.140 & 0.0044 & 92.5 & 4/4 \\
+Honolulu      & HI (Open ocean)  & 0.135 & 0.0068 & 93.8 & 4/4 \\
+Seattle       & WA (Pacific)     & 0.204 & 0.0051 & 92.5 & 4/4 \\
+Wilmington    & NC (Atlantic)    & 0.163 & 0.0053 & 93.8 & 4/4 \\
+\midrule
+\textbf{Overall} & \textbf{6 stations} & \textbf{0.171} & \textbf{0.0051} & \textbf{93.2} & \textbf{24/24} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 24 constituent detections (4 constituents $\times$ 6 stations) were classified as \textsc{confirmed}, with an overall mean CV of 0.171\% and mean frequency error of 0.0051\% (\Cref{tab:tidal}). This is the highest detection rate and lowest frequency error of any domain tested.
+
+The per-constituent CV ordering reveals a physically meaningful gradient within a single domain. S2 produces 0.000\% CV across all six stations, reflecting the solar semidiurnal tide's exact deterministic coupling to Earth's rotation. M2 at 0.096\% mean CV shows the lunar tide's high stability modulated slightly by the 18.6-year nodal cycle. The diurnal constituents K1 (0.222\%) and O1 (0.365\%) exhibit higher CV, consistent with their greater susceptibility to seasonal modulation and shallow-water nonlinearity. This within-domain CV gradient is a new observation not available in any other Ab Astris domain: it demonstrates that the CV metric discriminates between different forcing mechanisms measured at the same location with the same instrument, not just between domains.
+
+After subtracting NOAA harmonic tidal predictions from the observed water levels, residual signals at all stations show dominant periods of 6--11 days with CV values of 12.5--97.4\% and low detection rates. These weather-driven residuals (atmospheric pressure forcing, coastal-trapped waves, wind setup) are correctly identified as non-stationary by the CV discriminator, providing a built-in negative control at each station analogous to the cryptocurrency rejection used in the cross-domain validation.
+
+The tidal domain is also the one application where the Lomb-Scargle periodogram offers a genuine methodological advantage over FFT-based spectral estimation even for the spectral estimation step itself, not just the stability framework. Tide gauge records routinely contain gaps that violate the uniform-sampling assumption of the FFT, whereas the Lomb-Scargle method handles these gaps natively without interpolation or data imputation.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Negative Controls: Non-Physics-Constrained Domains}
+\label{sec:negative-controls}
+% ──────────────────────────────────────────────────────────
+
+The preceding subsections demonstrate that the Ab Astris pipeline detects stable periodic signals across six physics-constrained domains. A natural question is whether the CV metric also correctly \emph{rejects} signals from domains without deterministic periodic forcing, or whether any sufficiently long time series will produce low CV values and spurious detections. To address this, we applied the identical pipeline to three negative control domains chosen to span a gradient from purely stochastic (market data) through biologically regulated (cardiac oscillation) to chaotic but physical (solar dynamo).
+
+\paragraph{Cryptocurrency market data.} Daily closing prices for Bitcoin (BTC) and Ethereum (ETH) over the 2023 calendar year were analysed using the same pipeline parameters as the tidal analysis (8 windows, 50\% overlap, 10{,}000 frequency grid points). Neither asset produced a stable periodic detection. BTC yielded a spurious peak at a period of 207 days with CV of 53.0\% and zero detection rate across windows; ETH produced a 218-day peak with CV of 71.9\% and zero detection rate. Both were classified as \textsc{noise}. The absence of any physics-constrained periodic driver is correctly identified.
+
+\paragraph{Heart rate variability.} RR interval time series from six healthy subjects in the PhysioNet Normal Sinus Rhythm Database \citep{Goldberger2000} were converted to instantaneous heart rate and analysed with the Lomb-Scargle pipeline. The heart is a genuine mechanical oscillator, making this a harder negative control than cryptocurrency: quasi-periodic signals are present, but their frequencies are continuously modulated by autonomic nervous system regulation. Across the standard HRV frequency bands, the pipeline detected quasi-periodic peaks with CV values of 11.6\% $\pm$ 5.6\% (LF band, 0.04--0.15\,Hz), 15.4\% $\pm$ 6.1\% (HF band, 0.15--0.4\,Hz), and 21.5\% $\pm$ 13.4\% (VLF band, 0.003--0.04\,Hz). All values exceed the physics-constrained ceiling of 1.02\% by an order of magnitude. The LF band's lower CV relative to HF is physiologically consistent: the ${\sim}$0.1\,Hz Mayer wave (baroreceptor-mediated blood pressure regulation) is a more mechanistically constrained oscillation than respiratory sinus arrhythmia, which varies directly with breathing rate, posture, and activity state.
+
+\paragraph{Sunspot numbers.} The SILSO daily and monthly sunspot number records \citep{Clette2014} were analysed in two configurations. Monthly mean sunspot numbers from 1749 to 2024 (275 years, ${\sim}$25 complete solar cycles) produced a dominant peak at 11.00 years with CV of 2.97\% and detection rate of 83\%. This places the solar cycle just above the physics-constrained ceiling (structural resonance at 1.02\%), consistent with a real physical oscillation driven by the magnetohydrodynamic dynamo but with well-documented cycle-to-cycle variation in period (9--14 years) and amplitude. Daily sunspot numbers from 1980 to 2024 were analysed for the ${\sim}$27-day Carrington rotation period, yielding a peak at 26.7 days with CV of 5.33\% and detection rate of 50\%. The higher CV reflects both differential rotation (the Sun's equator rotates faster than its poles) and the strong dependence of rotational modulation amplitude on solar cycle phase.
+
+The sunspot analysis provides the most rhetorically significant result: it demonstrates within-astronomy discrimination. Stellar pulsation (CV $< 0.01\%$) and the solar cycle (CV $= 2.97\%$) are both astronomical periodic signals, but the CV metric separates them by more than two orders of magnitude, correctly identifying that the magnetohydrodynamic dynamo is a fundamentally different kind of periodicity than the pressure-mode oscillation of a stellar interior. \Cref{tab:negcontrols} summarises all three negative control domains.
+
+\begin{table}[htbp]
+\centering
+\caption{Negative control results. All three domains produce CV values above the physics-constrained ceiling of 1.02\% (structural resonance).}
+\label{tab:negcontrols}
+\smallskip
+\small
+\begin{tabular}{llrrrl}
+\toprule
+\textbf{Domain} & \textbf{Signal} & \textbf{CV (\%)} & \textbf{Det.\ rate} & \textbf{Tier} & \textbf{Forcing mechanism} \\
+\midrule
+Sunspots (11-yr)  & Solar cycle       &  2.97  & 83\%  & PROBABLE & MHD dynamo \\
+Sunspots (27-day) & Solar rotation    &  5.33  & 50\%  & NOISE    & Differential rotation \\
+HRV (LF)          & Sympathetic       & 11.62  & ---   & ---      & Autonomic regulation \\
+HRV (HF)          & Respiratory       & 15.43  & ---   & ---      & Autonomic regulation \\
+HRV (VLF)         & Very low freq.    & 21.46  & ---   & ---      & Autonomic regulation \\
+Crypto (BTC)      & Price oscillation & 53.00  & 0\%   & NOISE    & Market sentiment \\
+Crypto (ETH)      & Price oscillation & 71.87  & 0\%   & NOISE    & Market sentiment \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ──────────────────────────────────────────────────────────
+\subsection{Cross-Domain CV Observations}
+\label{sec:cv-observations}
+% ──────────────────────────────────────────────────────────
+
+Combining the six physics-constrained domains with the three negative control domains produces a 14-entry CV gradient that is monotonic with respect to the determinism of the underlying forcing mechanism (\Cref{tab:cvgradient}; \Cref{fig:cvgradient}).
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-domain CV gradient with 95\% bootstrap confidence intervals (percentile bootstrap, $n=100{,}000$ resamples, seed 42), ordered by increasing CV mean. $N$ = number of individual CV measurements per domain. The gap between the physics-constrained ceiling (Structural/CESMD, CI upper 1.03\%) and the first non-deterministic domain (Sunspots 11-yr, 2.97\%) represents a 2.9$\times$ separation that was not tuned or optimised. Entries with $N=1$ are point estimates where bootstrap CI is not applicable.\textsuperscript{$\dagger$} Z24 value is the mean of 814 confirmed-tier measurements; median is 0.43\% (right-skewed by damage-phase outliers).}
+\label{tab:cvgradient}
+\smallskip
+\footnotesize
+\begin{tabular}{llrrl}
+\toprule
+\textbf{Domain} & \textbf{Forcing mechanism} & \textbf{$N$} & \textbf{CV mean (\%)} & \textbf{95\% CI} \\
+\midrule
+Tides (S2)         & Orbital mechanics       &    6 & 0.000 & [0.000,\ 0.000] \\
+Bearings           & Fixed geometry          &    5 & 0.008 & [0.006,\ 0.010] \\
+Tides (M2)         & Orbital mechanics       &    6 & 0.096 & [0.088,\ 0.102] \\
+Tides (K1, O1)     & Orbital + modulation    &   12 & 0.305 & [0.236,\ 0.377] \\
+Structural (Z24)   & Ambient excitation      &  814 & 0.730 & [0.637,\ 0.830] \\
+Structural (CESMD) & Earthquake excitation   &    6 & 1.019 & [1.008,\ 1.031] \\
+\midrule
+Sunspots (11-yr)   & MHD dynamo              &    1 & 2.97  & ---\textsuperscript{$\dagger$} \\
+Sunspots (27-day)  & Differential rotation   &    1 & 5.33  & ---\textsuperscript{$\dagger$} \\
+Volcanic tremor    & Evolving source         &  679 & 9.91  & [9.56,\ 10.26] \\
+HRV (LF)           & Autonomic regulation    &    6 & 11.6  & [7.72,\ 16.59] \\
+HRV (HF)           & Autonomic regulation    &    6 & 15.4  & [10.64,\ 20.26] \\
+HRV (VLF)          & Autonomic regulation    &    6 & 21.5  & [13.51,\ 33.64] \\
+Crypto (BTC)       & Market sentiment        &    1 & 53.0  & ---\textsuperscript{$\dagger$} \\
+Crypto (ETH)       & Market sentiment        &    1 & 71.9  & ---\textsuperscript{$\dagger$} \\
+\bottomrule
+\end{tabular}
+\par\smallskip\footnotesize\textsuperscript{$\dagger$}Single-measurement entries ($N=1$): bootstrap CI is not applicable; values are point estimates.
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{fig3_cv_gradient.pdf}
+\caption{Cross-domain CV gradient spanning four orders of magnitude, from deterministic orbital mechanics (S2 tidal constituent, CV $\approx 0\%$) to stochastic market data (cryptocurrency, CV 53--72\%). Filled markers show domain CV means with 95\% bootstrap confidence intervals (percentile bootstrap, $n=100{,}000$ resamples; see \Cref{tab:cvgradient}). Open diamond markers indicate single-measurement entries ($N=1$) for which bootstrap CI is not applicable. The shaded region highlights the ${\sim}3\times$ gap between the physics-constrained ceiling (Structural/CESMD, CI upper 1.03\%) and the first non-deterministic domain (Sunspots 11-yr, 2.97\%), a separation that emerged from the data without tuning and is confirmed as non-overlapping by the bootstrap analysis.}
+\label{fig:cvgradient}
+\end{figure}
+
+
+Mechanical systems (bearings) produce CV values below 0.03\%, reflecting the high stability of resonant frequencies driven by fixed geometry and material properties. Gravitationally driven tidal oscillation produces CV of approximately 0.17\%, reflecting the high determinism of orbital forcing modulated by local oceanographic effects. Structural resonance produces CV means of 0.73--1.02\%, with the Z24 bridge results adding resolution to this band: ambient-excited structures (traffic, wind) have a mean CV of 0.730\% (median 0.43\%, right-skewed by damage-phase measurements), while earthquake-excited buildings cluster near 1.02\%, consistent with the difference in excitation stationarity. Above this physics-constrained ceiling, the solar cycle (2.97\%) occupies the base of the transitional band, followed by volcanic tremor (9.91\%, mean across 679 snapshots) reflecting the genuine physical evolution of magmatic and hydrothermal source conditions. The overlap of the solar cycle and volcanic tremor in the broader non-deterministic band is physically sensible: both involve complex nonlinear systems with genuine periodic drivers that exhibit substantial cycle-to-cycle variation. Biological cardiac oscillation (11.6--21.5\%) represents a further step: the heart is a real mechanical oscillator, but its frequency is under continuous feedback control rather than constrained by fixed physics. Finally, cryptocurrency prices (53--72\%) represent the stochastic floor: any apparent periodicity is an artefact of finite-window spectral estimation.
+
+The gradient spans four orders of magnitude in CV (from 0.000\% to 71.9\%) and is monotonic with respect to the determinism of the forcing mechanism, despite being constructed from completely independent analyses on unrelated datasets. We emphasise that the CV ranges were not specified in advance, and the ordering emerged from applying the same stability calculation across all domains without tuning. We do not claim a theoretical basis for why approximately 1--3\% separates physics-constrained from non-deterministic systems, nor do we assert that this threshold will hold in all untested domains. To quantify the robustness of the observed separation, we computed 95\% bootstrap confidence intervals on the domain-level CV means via percentile bootstrap with $n = 100{,}000$ resamples (\Cref{tab:cvgradient}). For the critical boundary, the physics-constrained ceiling (Structural/CESMD: 1.01--1.03\%, $N=6$) and the first non-deterministic domain (Sunspots 11-yr: 2.97\%, $N=1$) show that the upper 95\% CI bound of the physics-constrained ceiling (1.03\%) remains below the sunspot point estimate (2.97\%), a 2.9$\times$ separation. Domains with $N \geq 5$ show well-defined bootstrap intervals, while single-measurement entries (sunspot analyses, individual crypto assets) are reported as point estimates where bootstrap CI is not applicable. Across nine domains with fundamentally different physical mechanisms (or no physical mechanism at all), the CV provides a consistent and interpretable measure of signal reliability.
+
+
+% ══════════════════════════════════════════════════════════
+\section{Discussion}
+\label{sec:discussion}
+% ══════════════════════════════════════════════════════════
+
+The results across six domains establish that a single signal detection pipeline, developed for astronomical variable star discovery, transfers to five additional engineering and geophysical domains with competitive performance and minimal adaptation. This section considers what that transferability implies, where it breaks down, and how the framework should be positioned relative to domain-specific methods.
+
+% ──────────────────────────────────────────────────────────
+\subsection{What Transfers}
+\label{sec:transfers}
+% ──────────────────────────────────────────────────────────
+
+The fixed detection-validation-scoring core (multi-window stability validation, bootstrap error estimation, composite confidence scoring) requires no modification across domains. The default Lomb-Scargle spectral front-end serves five of six domains without substitution, and the same code that detects millihertz stellar pulsations detects hundred-hertz bearing defect frequencies and sub-hertz volcanic tremor. The domain-specific inputs are confined to preprocessing parameters (bandpass range, window count, snapshot duration) and confidence score frequency bounds that reflect the physical frequency scale and stationarity timescale of each phenomenon.
+
+This transferability has a straightforward explanation: all six domains involve periodic or quasi-periodic signals generated by physics-constrained mechanisms, observed through noisy measurements. The Lomb-Scargle periodogram is a general-purpose tool for detecting such signals, and the multi-window CV is a general-purpose measure of temporal stability. Neither technique encodes domain knowledge; they operate on the statistical properties of the signal rather than its physical origin. The contribution of Ab Astris is not the invention of new signal processing methods, but the systematic demonstration that these well-established methods, combined into a single pipeline, produce useful results across domains where they are not conventionally applied. The oceanographic domain is notable in this regard: it is the one application where the Lomb-Scargle periodogram's native handling of unevenly sampled data provides a genuine practical advantage over FFT-based approaches even for the spectral estimation step itself. The per-constituent CV ordering within the tidal domain (S2 $<$ M2 $<$ K1 $<$ O1) further validates the CV metric at a finer grain than cross-domain comparisons alone, demonstrating that it discriminates between different forcing mechanisms measured at the same location with the same instrument.
+
+The Z24 bridge results extend this transferability to a benchmark progressive damage dataset, demonstrating that the pipeline tracks real structural degradation over 23 damage phases with no modification beyond the standard structural preprocessing parameters. The ambient-excited bridge CV of 0.43\% fills a gap in the cross-domain hierarchy that was not observable from the earthquake-excited CESMD buildings alone, refining the structural band from a single point (${\sim}$1\%) to a range (0.4--1\%) that depends on excitation type.
+
+We stop short of claiming this as a universal law. The six physics-constrained domains tested all involve mechanical or wave-based oscillation, and we have not evaluated the CV on all possible domain types. However, the three negative control domains (cryptocurrency, heart rate variability, and sunspot numbers) confirm that the metric's discriminative capacity extends beyond the physics-constrained band: it correctly identifies chaotic, biologically regulated, and stochastic signals as distinct from deterministic periodic forcing, producing a monotonic 14-entry gradient spanning four orders of magnitude. The appropriate claim is empirical: across nine domains spanning seven orders of magnitude in frequency, the CV provides a consistent and interpretable measure of detection reliability.
+
+% ──────────────────────────────────────────────────────────
+\subsection{What Does Not Transfer}
+\label{sec:limitations-transfer}
+% ──────────────────────────────────────────────────────────
+
+\paragraph{Sensitivity to weak signals.} The bearing fault analysis demonstrates that the generic pipeline misses 2 of 8 CWRU conditions (the cases where the fault signature is masked by structural resonance (OR~0.014\textquotedbl{}) or is the weakest in the dataset (Ball~0.007\textquotedbl{}). Conventional envelope analysis detects both. The generic pipeline's 6/8 detection rate is competitive for a domain-agnostic method, but an engineer responsible for a specific bearing would rightly prefer the 8/8 sensitivity of the established approach.
+
+\paragraph{Environmental compensation.} The Z24 results demonstrate that environmental effects (temperature, humidity) produce frequency variations of similar magnitude to early structural damage. The Ab Astris pipeline reports frequencies as measured and does not compensate for environmental confounding. Distinguishing temperature-driven from damage-induced frequency changes requires domain-specific knowledge (temperature sensor data, regression models, seasonal baselines) that is outside the scope of a generic detection pipeline. This limitation applies to any frequency-based structural monitoring application and is not specific to Ab Astris, but it constrains the pipeline's standalone utility for early damage detection in structures subject to significant environmental variation.
+
+\paragraph{Low-frequency anomaly detection.} The wind turbine results illustrate a different boundary. SCADA data lack the bandwidth for bearing defect frequency analysis; the pipeline instead detects low-frequency operational anomalies. The CARE score of 0.527 is competitive but 20\% below the autoencoder baseline, which learns complex nonlinear sensor correlations from the data directly. The generic pipeline's advantage (physical interpretability and no training phase) comes at a real cost in detection performance when the available signals are indirect indicators of fault progression.
+
+\paragraph{Damage localisation.} Detection (has the system changed?) is a fundamentally different problem from localisation (where has it changed?). The Ab Astris pipeline addresses detection only. Localisation requires a physical model of the specific system and constitutes a domain-specific inverse problem. The Z24 results illustrate this distinction: the pipeline detects an 88\% frequency drop in Phase~12 but cannot determine that this resulted from pier settlement at a specific location. Localisation methods remain domain-specific and require additional information beyond what a generic spectral pipeline can provide.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Positioning: First-Pass Screening, Not Replacement}
+\label{sec:positioning}
+% ──────────────────────────────────────────────────────────
+
+These results suggest a natural positioning for the Ab Astris methodology: as a first-pass screening tool that provides rapid, interpretable detection across domains, identifying which signals warrant deeper investigation with domain-specific methods.
+
+In this framing, the bearing analysis workflow would begin with the generic pipeline to identify which conditions show stable periodic signatures, then apply envelope analysis to the cases where the generic pipeline fails or where higher sensitivity is needed. The structural monitoring workflow would use Ab Astris frequency extraction for damage detection (frequency shift identification from any building with at least one observable mode), with domain-specific analysis reserved for localisation and environmental compensation.
+
+This positioning is consistent with the ablation results from the wind turbine domain, where the Lomb-Scargle periodic baseline serves as the primary detection channel (detecting 3.5$\times$ more events than the temperature-based NBM) while the hybrid architecture adds precision. The generic method provides breadth; domain-specific methods provide depth.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Limitations}
+\label{sec:limitations}
+% ──────────────────────────────────────────────────────────
+
+\paragraph{Astronomical validation depth.} The full 2{,}947-candidate survey has been validated against four independent external sources: 93.0\% period agreement with the Fetherolf TESS-SVC (556 overlapping TICs), 73.3\% with Gaia DR3 (658 with periods), and 59.4--76.2\% with ground-based surveys (ASAS-SN, ZTF, ATLAS), with 53.0\% of discoveries appearing in at least one external catalogue. Within the 843-candidate sub-survey, 107 previously unreported variable star candidates have no prior period measurement in any of 20 variability databases checked; 100 are entirely absent from all external sources, and 7 have variability flags but no published period. None of the 107 have been confirmed by independent follow-up observation and remain candidates. The 47.0\% of full-survey discoveries not present in any catalogue likely reflects TESS\textquotesingle{}s photometric depth advantage, but could also include marginal detections that would not survive independent confirmation.
+
+\paragraph{Negative control breadth.} Three negative control domains (cryptocurrency, heart rate variability, and sunspot numbers) confirm that the CV metric correctly rejects non-physics-constrained signals, and the tidal residual analysis provides within-domain discrimination at each station. Bootstrap confidence intervals confirm the 2.9$\times$ gap between the physics-constrained ceiling and the first non-deterministic domain (\Cref{tab:cvgradient}). However, the negative controls tested all involve time-series data with relatively simple structure. Domains with more complex quasi-periodic behaviour (e.g., climate oscillations such as ENSO, or neural oscillations in EEG recordings) would further test the boundaries of the CV discriminator. The two sunspot entries and both cryptocurrency entries have $N=1$, so their CI cannot be formally quantified; extending these analyses to generate per-window CV distributions would resolve this gap.
+
+\paragraph{Environmental confounding in structural monitoring.} As demonstrated by the Z24 results, the pipeline does not distinguish between environmental and damage-induced frequency changes. For structural applications in environments with significant temperature variation, environmental compensation must be provided by domain-specific methods upstream or downstream of the Ab Astris detection.
+
+\paragraph{CARE benchmark gap.} The 20\% gap between the hybrid TorqueScope (0.527) and the autoencoder baseline (0.660) is non-trivial and indicates room for improvement, particularly in the accuracy dimension.
+
+\paragraph{Single-domain depth vs.\ cross-domain breadth.} The pipeline is deliberately generic, which means it does not exploit domain-specific knowledge that could improve performance in any individual domain. The trade-off between breadth and depth is inherent to the approach and is most visible in the bearing and wind turbine results, where domain-specific methods achieve higher sensitivity.
+
+% ──────────────────────────────────────────────────────────
+\subsection{Broader Implications}
+\label{sec:implications}
+% ──────────────────────────────────────────────────────────
+
+The practical value of cross-domain transferability is not merely academic. Condition monitoring systems are expensive to develop, validate, and maintain. If a single pipeline can provide useful screening across multiple asset types (buildings, rotating machinery, geophysical instruments), the development cost is amortised across domains rather than duplicated within each. This is particularly relevant for applications where the alternative is no monitoring at all: small-scale industrial facilities, developing-world infrastructure, or research installations that cannot justify the cost of domain-specific commercial monitoring systems.
+
+The CV stability metric offers a secondary practical benefit: it provides a domain-agnostic quality indicator for any periodic detection. An operator unfamiliar with the specific domain can assess whether a detected signal is likely to represent a stable physical phenomenon (low CV) or transient noise (high CV) without needing to understand the underlying physics. This makes the pipeline's output interpretable by non-specialists, which is relevant for monitoring applications where domain expertise is scarce.
+
+The cross-domain CV hierarchy (mechanical $<$ tidal $<$ structural $<$ volcanic) also suggests a direction for future work: investigating whether the statistical structure of physics-constrained periodic signals is learnable across domains, and whether a model trained on spectral features from multiple domains can predict signal characteristics in unseen domains. The empirical consistency of the CV bands across six fundamentally different physical systems provides preliminary evidence that such cross-domain structure exists, though this remains a hypothesis to be tested rather than a demonstrated result.
+
+
+% ══════════════════════════════════════════════════════════
+\section{Conclusion}
+\label{sec:conclusion}
+% ══════════════════════════════════════════════════════════
+
+This paper has demonstrated that a signal detection pipeline developed for astronomical variable star discovery transfers to five additional engineering and geophysical domains (bearing fault detection, volcanic tremor monitoring, oceanographic tidal analysis, wind turbine diagnostics, and structural health monitoring) with competitive performance and no modification to the core algorithm. The adaptation required in each domain is confined to physically motivated preprocessing parameters, while the detection algorithm, stability metric, and confidence scoring are identical across all six applications.
+
+The results establish three principal findings. First, the Lomb-Scargle periodogram combined with multi-window stability validation provides a robust detection pipeline that is not specific to astronomy, achieving detection rates of 100\% on bearing faults (for detectable conditions), variable stars, and tidal constituents, tracking volcanic tremor frequency evolution across four eruptions, and monitoring progressive structural damage across 23 phases of the Z24 bridge benchmark. Second, the coefficient of variation of detected frequencies produces a monotonic gradient across all tested domains: below 0.03\% for mechanical systems, approximately 0.17\% for gravitationally driven tidal oscillation, 0.73--1.02\% for structural resonance depending on excitation type (mean values; ambient-excited Z24 bridge median 0.43\%), 2.97--5.33\% for chaotic solar oscillations, 9.91\% for volcanic tremor, 11.6--21.5\% for biologically regulated cardiac oscillation, and 53--72\% for stochastic market data. This 14-entry gradient spanning four orders of magnitude provides an empirical (though not theoretically derived) measure of signal reliability that correctly discriminates between deterministic, chaotic, biological, and stochastic forcing mechanisms. Third, within the structural domain, the Z24 bridge results demonstrate that the pipeline tracks real progressive damage through frequency degradation while also revealing the fundamental limitation of frequency-based monitoring: environmental effects produce frequency variations of similar magnitude to early damage, requiring domain-specific compensation that is outside the scope of a generic detection pipeline.
+
+The results also establish clear boundaries. The generic pipeline misses weak or masked bearing fault signatures that domain-specific envelope analysis detects. The wind turbine CARE score of 0.527 falls 20\% below the autoencoder baseline, reflecting the cost of physical interpretability relative to black-box approaches. The Z24 environmental confounding demonstrates that detection alone is insufficient for structural monitoring without temperature compensation. These are not incidental limitations; they define the operating envelope within which the methodology provides value.
+
+The appropriate role for Ab Astris is as a first-pass screening tool: a single pipeline that provides rapid, interpretable detection across domains, identifying which signals warrant deeper investigation with domain-specific methods. This is particularly relevant for applications where the alternative is no monitoring at all: small-scale facilities, developing-world infrastructure, or research installations that cannot justify the cost of multiple domain-specific commercial systems.
+
+Future work should address the limitations identified in this study: environmental compensation for structural monitoring applications, more systematic characterisation of the CV metric's behaviour at the boundaries of its applicability, extension of the pipeline to additional physics-constrained domains, and investigation of whether the cross-domain statistical structure revealed by the CV hierarchy can be exploited by learned models that transfer between domains.
+
+
+% ══════════════════════════════════════════════════════════
+\section*{Data and Code Availability}
+% ══════════════════════════════════════════════════════════
+
+The Ab Astris pipeline code is available from the corresponding author on request. Several of the datasets used in this study are publicly available: the CWRU bearing dataset (\url{https://engineering.case.edu/bearingdatacenter}), NOAA CO-OPS tide gauge data (\url{https://tidesandcurrents.noaa.gov}), PhysioNet Normal Sinus Rhythm Database \citep{Goldberger2000}, and SILSO sunspot numbers (\url{https://www.sidc.be/silso}). Seismic waveform data were retrieved via IRIS/FDSN web services (\url{https://www.iris.edu}). CESMD strong-motion recordings are available at \url{https://www.strongmotioncenter.org}. The Z24 bridge dataset was produced by the KU~Leuven Structural Mechanics Section as part of the European SIMCES project; access should be requested from KU~Leuven. The CARE wind turbine benchmark dataset is available from the CARE benchmark organisers. TESS photometric data are available through the Mikulski Archive for Space Telescopes (MAST; \url{https://mast.stsci.edu}).
+
+% ══════════════════════════════════════════════════════════
+% REFERENCES
+% ══════════════════════════════════════════════════════════
+
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{99}
+
+\bibitem[Fetherolf et~al.(2023)]{Fetherolf2023}
+Fetherolf, T., Pepper, J., Simpson, E., et~al. (2023).
+\newblock The {TESS} Stellar Variability Catalog.
+\newblock \textit{The Astronomical Journal}, 165(2):34.
+
+\bibitem[Chen et~al.(2020)]{Chen2020}
+Chen, X., Wang, S., Deng, L., de~Grijs, R., Liu, C., and Tian, H. (2020).
+\newblock The {ZTF} catalog of periodic variable stars.
+\newblock \textit{The Astrophysical Journal Supplement Series}, 249(1):18.
+
+\bibitem[Clette et~al.(2014)]{Clette2014}
+Clette, F., Svalgaard, L., Vaquero, J.~M., and Cliver, E.~W. (2014).
+\newblock Revisiting the sunspot number: A 400-year perspective on the solar cycle.
+\newblock \textit{Space Science Reviews}, 186:35--103.
+
+\bibitem[De~Roeck(2003)]{DeRoeck2003}
+De~Roeck, G. (2003).
+\newblock The state-of-the-art of damage detection by vibration monitoring: the {SIMCES} experience.
+\newblock \textit{Journal of Structural Control}, 10:127--143.
+
+\bibitem[Erol(2011)]{Erol2011}
+Erol, S. (2011).
+\newblock Time-frequency analyses of tide-gauge sensor data.
+\newblock \textit{Sensors}, 11(4):3939--3961.
+
+\bibitem[Flinchem and Jay(2000)]{Flinchem2000}
+Flinchem, E.~P. and Jay, D.~A. (2000).
+\newblock An introduction to wavelet transform tidal analysis methods.
+\newblock \textit{Estuarine, Coastal and Shelf Science}, 51(2):177--200.
+
+\bibitem[Foreman(1977)]{Foreman1977}
+Foreman, M.~G.~G. (1977).
+\newblock Manual for tidal heights analysis and prediction.
+\newblock \textit{Pacific Marine Science Report}, 77-10, Institute of Ocean Sciences, Patricia Bay, Sidney, BC.
+
+\bibitem[Goldberger et~al.(2000)]{Goldberger2000}
+Goldberger, A.~L., Amaral, L.~A.~N., Glass, L., Hausdorff, J.~M., Ivanov, P.~C., Mark, R.~G., Mietus, J.~E., Moody, G.~B., Peng, C.-K., and Stanley, H.~E. (2000).
+\newblock {PhysioBank, PhysioToolkit, and PhysioNet}: Components of a new research resource for complex physiologic signals.
+\newblock \textit{Circulation}, 101(23):e215--e220.
+
+\bibitem[Heinze et~al.(2018)]{Heinze2018}
+Heinze, A.~N., Tonry, J.~L., Denneau, L., et~al. (2018).
+\newblock A first catalog of variable stars measured by {ATLAS}.
+\newblock \textit{The Astronomical Journal}, 156(5):241.
+
+\bibitem[Jayasinghe et~al.(2018)]{Jayasinghe2018}
+Jayasinghe, T., Kochanek, C.~S., Stanek, K.~Z., et~al. (2018).
+\newblock The {ASAS-SN} catalogue of variable stars {I}: The {Serendipitous} survey.
+\newblock \textit{Monthly Notices of the Royal Astronomical Society}, 477(3):3145--3163.
+
+\bibitem[Kov{\'a}cs et~al.(2002)]{Kovacs2002}
+Kov{\'a}cs, G., Zucker, S., and Mazeh, T. (2002).
+\newblock A box-fitting algorithm in the search for periodic transits.
+\newblock \textit{Astronomy \& Astrophysics}, 391:369--377.
+
+\bibitem[Li et~al.(2020)]{Li2020}
+Li, X., Jia, X.-D., Zhang, W., Ma, H., Luo, Z., and Li, X. (2020).
+\newblock Intelligent cross-machine fault diagnosis approach with deep auto-encoder and domain adaptation.
+\newblock \textit{Neurocomputing}, 383:235--247.
+
+\bibitem[Lomb(1976)]{Lomb1976}
+Lomb, N.~R. (1976).
+\newblock Least-squares frequency analysis of unequally spaced data.
+\newblock \textit{Astrophysics and Space Science}, 39:447--462.
+
+\bibitem[Maeck and De~Roeck(2003)]{Maeck2003}
+Maeck, J. and De~Roeck, G. (2003).
+\newblock Description of {Z24} benchmark.
+\newblock \textit{Mechanical Systems and Signal Processing}, 17(1):127--131.
+
+\bibitem[McNutt(1996)]{McNutt1996}
+McNutt, S.~R. (1996).
+\newblock Seismic monitoring and eruption forecasting of volcanoes.
+\newblock In \textit{Monitoring and Mitigation of Volcano Hazards}, Springer.
+
+\bibitem[Peeters and De~Roeck(2001)]{Peeters2001}
+Peeters, B. and De~Roeck, G. (2001).
+\newblock One-year monitoring of the {Z24-Bridge}: environmental effects versus damage events.
+\newblock \textit{Earthquake Engineering \& Structural Dynamics}, 30(2):149--171.
+
+\bibitem[Randall and Antoni(2011)]{Randall2011}
+Randall, R.~B. and Antoni, J. (2011).
+\newblock Rolling element bearing diagnostics: A tutorial.
+\newblock \textit{Mechanical Systems and Signal Processing}, 25:485--520.
+
+\bibitem[Reynders et~al.(2014)]{Reynders2014}
+Reynders, E., Wursten, G., and De~Roeck, G. (2014).
+\newblock Output-only structural health monitoring in changing environmental conditions by means of nonlinear system identification.
+\newblock \textit{Structural Health Monitoring}, 13(1):82--93.
+
+\bibitem[Reynders and De~Roeck(2015)]{Reynders2015}
+Reynders, E. and De~Roeck, G. (2015).
+\newblock Vibration-based damage identification: The {Z24} bridge benchmark.
+\newblock In Beer, M., Kougioumtzoglou, I.~A., Patelli, E., and Au, S.-K., editors, \textit{Encyclopedia of Earthquake Engineering}, Springer, Berlin, Heidelberg.
+
+\bibitem[Scargle(1982)]{Scargle1982}
+Scargle, J.~D. (1982).
+\newblock Studies in astronomical time series analysis. {II}. {S}tatistical aspects of spectral analysis of unevenly spaced data.
+\newblock \textit{The Astrophysical Journal}, 263:835--853.
+
+\bibitem[Smith and Randall(2015)]{Smith2015}
+Smith, W.~A. and Randall, R.~B. (2015).
+\newblock Rolling element bearing diagnostics using the {Case Western Reserve University} data.
+\newblock \textit{Mechanical Systems and Signal Processing}, 64--65:100--131.
+
+\bibitem[VanderPlas(2018)]{VanderPlas2018}
+VanderPlas, J.~T. (2018).
+\newblock Understanding the {Lomb-Scargle} periodogram.
+\newblock \textit{The Astrophysical Journal Supplement Series}, 236:16.
+
+\bibitem[Zechmeister and K{\"u}rster(2009)]{Zechmeister2009}
+Zechmeister, M. and K{\"u}rster, M. (2009).
+\newblock The generalised {Lomb-Scargle} periodogram: A new formalism for the floating-mean and {Keplerian} periodograms.
+\newblock \textit{Astronomy \& Astrophysics}, 496:577--584.
+
+\bibitem[Zhang et~al.(2020)]{Zhang2018}
+Zhang, S., Zhang, S., Wang, B., and Habetler, T.~G. (2020).
+\newblock Deep learning algorithms for bearing fault diagnostics: A comprehensive review.
+\newblock \textit{IEEE Access}, 8:29857--29881.
+
+\bibitem[Zhao et~al.(2021)]{Zhao2021}
+Zhao, Z., Zhang, Q., Yu, X., Sun, C., Wang, S., Yan, R., and Chen, X. (2021).
+\newblock Applications of unsupervised deep transfer learning to intelligent fault diagnosis: A survey and comparative study.
+\newblock \textit{IEEE Transactions on Instrumentation and Measurement}, 70:1--28.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,483 @@
+{
+  "experiment": "Ab Astris Negative Control: Heart Rate Variability",
+  "methodology": "Ab Astris (Lomb-Scargle + Multi-window + Bootstrap)",
+  "data_source": "PhysioNet Normal Sinus Rhythm RR Interval Database (nsr2db)",
+  "timestamp": "2026-02-27T11:24:41.885062",
+  "parameters": {
+    "resample_fs_hz": 4.0,
+    "rr_min_sec": 0.3,
+    "rr_max_sec": 2.0,
+    "n_windows": 8,
+    "window_duration_sec": 10800,
+    "n_bootstrap": 100,
+    "n_freq_points": 10000,
+    "freq_tolerance": 0.1,
+    "bandpass_order": 4,
+    "hrv_bands": {
+      "VLF": {
+        "hz_low": 0.003,
+        "hz_high": 0.04
+      },
+      "LF": {
+        "hz_low": 0.04,
+        "hz_high": 0.15
+      },
+      "HF": {
+        "hz_low": 0.15,
+        "hz_high": 0.4
+      }
+    }
+  },
+  "subjects": {
+    "nsr001": {
+      "subject_id": "nsr001",
+      "n_beats": 106464,
+      "duration_hours": 22.465279947916667,
+      "mean_hr_bpm": 82.76550853434001,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.004827982798279827,
+          "ls_power": 0.010744682348038465,
+          "ls_fap": 0.0,
+          "multi_window_cv": 15.949589206372433,
+          "multi_window_cv_clean": 11.173876751611354,
+          "detection_rate": 0.25,
+          "bootstrap_freq_mean_hz": 0.0048279827982798265,
+          "bootstrap_freq_std_hz": 8.673617379884035e-19,
+          "bootstrap_ci_low_hz": 0.004827982798279827,
+          "bootstrap_ci_high_hz": 0.004827982798279827,
+          "confidence_score": 30.0,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.0533993399339934,
+          "ls_power": 0.001542507464878292,
+          "ls_fap": 4.753231544275729e-102,
+          "multi_window_cv": 11.666494862933213,
+          "multi_window_cv_clean": 11.666494862933213,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.056380638063806374,
+          "bootstrap_freq_std_hz": 0.00768144660297373,
+          "bootstrap_ci_low_hz": 0.050220022002200215,
+          "bootstrap_ci_high_hz": 0.07473047304730474,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.22878287828782878,
+          "ls_power": 0.0009040737260141237,
+          "ls_fap": 2.9082470740223434e-57,
+          "multi_window_cv": 8.148349164583452,
+          "multi_window_cv_clean": 8.148349164583452,
+          "detection_rate": 0.625,
+          "bootstrap_freq_mean_hz": 0.22647689768976897,
+          "bootstrap_freq_std_hz": 0.004954520147906005,
+          "bootstrap_ci_low_hz": 0.21537028702870287,
+          "bootstrap_ci_high_hz": 0.23067931793179317,
+          "confidence_score": 42.5,
+          "confidence_tier": "NOISE"
+        }
+      }
+    },
+    "nsr002": {
+      "subject_id": "nsr002",
+      "n_beats": 111334,
+      "duration_hours": 23.329592013888888,
+      "mean_hr_bpm": 81.91245638038868,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.00391029102910291,
+          "ls_power": 0.008409346802629059,
+          "ls_fap": 0.0,
+          "multi_window_cv": 50.494360944745154,
+          "multi_window_cv_clean": 50.494360944745154,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.003952031203120312,
+          "bootstrap_freq_std_hz": 0.00014936490369491895,
+          "bootstrap_ci_low_hz": 0.003716021602160216,
+          "bootstrap_ci_high_hz": 0.0042877287728772875,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.05122112211221122,
+          "ls_power": 0.0018726194149152105,
+          "ls_fap": 2.8126257636900355e-130,
+          "multi_window_cv": 5.115115196829578,
+          "multi_window_cv_clean": 5.115115196829578,
+          "detection_rate": 0.125,
+          "bootstrap_freq_mean_hz": 0.05364301430143012,
+          "bootstrap_freq_std_hz": 0.004355273809969684,
+          "bootstrap_ci_low_hz": 0.04938393839383938,
+          "bootstrap_ci_high_hz": 0.06569856985698569,
+          "confidence_score": 32.5,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.3476197619761976,
+          "ls_power": 0.00057425095306781,
+          "ls_fap": 1.0550567031917079e-35,
+          "multi_window_cv": 18.721684798539243,
+          "multi_window_cv_clean": 18.721684798539243,
+          "detection_rate": 0.375,
+          "bootstrap_freq_mean_hz": 0.3291106610661066,
+          "bootstrap_freq_std_hz": 0.04414775477357333,
+          "bootstrap_ci_low_hz": 0.1963477597759776,
+          "bootstrap_ci_high_hz": 0.3476197619761976,
+          "confidence_score": 32.5,
+          "confidence_tier": "NOISE"
+        }
+      }
+    },
+    "nsr003": {
+      "subject_id": "nsr003",
+      "n_beats": 97585,
+      "duration_hours": 23.47149739583333,
+      "mean_hr_bpm": 70.42648788547186,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.004876087608760876,
+          "ls_power": 0.007773558892104767,
+          "ls_fap": 0.0,
+          "multi_window_cv": 14.731577332910087,
+          "multi_window_cv_clean": 14.731577332910087,
+          "detection_rate": 0.625,
+          "bootstrap_freq_mean_hz": 0.004876087608760877,
+          "bootstrap_freq_std_hz": 8.673617379884035e-19,
+          "bootstrap_ci_low_hz": 0.004876087608760876,
+          "bootstrap_ci_high_hz": 0.004876087608760876,
+          "confidence_score": 37.5,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.06781078107810781,
+          "ls_power": 0.0015473980099008039,
+          "ls_fap": 3.0894236747241645e-107,
+          "multi_window_cv": 7.644048112255625,
+          "multi_window_cv_clean": 7.644048112255625,
+          "detection_rate": 0.0,
+          "bootstrap_freq_mean_hz": 0.0658201320132013,
+          "bootstrap_freq_std_hz": 0.005662306382526187,
+          "bootstrap_ci_low_hz": 0.04971397139713971,
+          "bootstrap_ci_high_hz": 0.06781078107810781,
+          "confidence_score": 30.0,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.27663766376637666,
+          "ls_power": 0.0004217630711604666,
+          "ls_fap": 7.988356221170573e-25,
+          "multi_window_cv": 12.715264356107522,
+          "multi_window_cv_clean": 8.358984598509243,
+          "detection_rate": 0.75,
+          "bootstrap_freq_mean_hz": 0.25893939393939397,
+          "bootstrap_freq_std_hz": 0.05072051361258597,
+          "bootstrap_ci_low_hz": 0.1801030103010301,
+          "bootstrap_ci_high_hz": 0.35647064706470644,
+          "confidence_score": 45.0,
+          "confidence_tier": "NOISE"
+        }
+      }
+    },
+    "nsr004": {
+      "subject_id": "nsr004",
+      "n_beats": 97821,
+      "duration_hours": 23.11966796875,
+      "mean_hr_bpm": 73.64684932229594,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.00598989898989899,
+          "ls_power": 0.007642285959253548,
+          "ls_fap": 0.0,
+          "multi_window_cv": 15.950453579347467,
+          "multi_window_cv_clean": 15.950453579347467,
+          "detection_rate": 0.125,
+          "bootstrap_freq_mean_hz": 0.005657457745774577,
+          "bootstrap_freq_std_hz": 0.000691720756571782,
+          "bootstrap_ci_low_hz": 0.004058305830583058,
+          "bootstrap_ci_high_hz": 0.00598989898989899,
+          "confidence_score": 27.5,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.05127612761276128,
+          "ls_power": 0.0017410826148952703,
+          "ls_fap": 1.528176981158493e-119,
+          "multi_window_cv": 22.864139429318612,
+          "multi_window_cv_clean": 22.864139429318612,
+          "detection_rate": 0.25,
+          "bootstrap_freq_mean_hz": 0.06307491749174918,
+          "bootstrap_freq_std_hz": 0.017423723331394598,
+          "bootstrap_ci_low_hz": 0.05127612761276128,
+          "bootstrap_ci_high_hz": 0.08903190319031903,
+          "confidence_score": 30.0,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.22180718071807182,
+          "ls_power": 0.0006627682291759902,
+          "ls_fap": 1.0531130194824768e-41,
+          "multi_window_cv": 12.332744813479444,
+          "multi_window_cv_clean": 12.332744813479444,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.21963896389638962,
+          "bootstrap_freq_std_hz": 0.005481122990904436,
+          "bootstrap_ci_low_hz": 0.2107010701070107,
+          "bootstrap_ci_high_hz": 0.22895789578957895,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        }
+      }
+    },
+    "nsr005": {
+      "subject_id": "nsr005",
+      "n_beats": 116773,
+      "duration_hours": 23.827434895833335,
+      "mean_hr_bpm": 89.04484707470533,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.003395939593959396,
+          "ls_power": 0.014114055954825634,
+          "ls_fap": 0.0,
+          "multi_window_cv": 22.40765888179994,
+          "multi_window_cv_clean": 22.40765888179994,
+          "detection_rate": 0.125,
+          "bootstrap_freq_mean_hz": 0.003395939593959396,
+          "bootstrap_freq_std_hz": 0.0,
+          "bootstrap_ci_low_hz": 0.003395939593959396,
+          "bootstrap_ci_high_hz": 0.003395939593959396,
+          "confidence_score": 27.5,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.06432343234323432,
+          "ls_power": 0.001589538292481784,
+          "ls_fap": 4.336619280404574e-112,
+          "multi_window_cv": 9.827124811866838,
+          "multi_window_cv_clean": 9.827124811866838,
+          "detection_rate": 0.375,
+          "bootstrap_freq_mean_hz": 0.059996589658965906,
+          "bootstrap_freq_std_hz": 0.004981579149215904,
+          "bootstrap_ci_low_hz": 0.05176017601760176,
+          "bootstrap_ci_high_hz": 0.06787541254125407,
+          "confidence_score": 37.5,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.3005400540054005,
+          "ls_power": 0.0005177317530345243,
+          "ls_fap": 2.155922140209938e-32,
+          "multi_window_cv": 21.702229990106133,
+          "multi_window_cv_clean": 21.702229990106133,
+          "detection_rate": 0.25,
+          "bootstrap_freq_mean_hz": 0.2888888888888888,
+          "bootstrap_freq_std_hz": 0.025076856630351505,
+          "bootstrap_ci_low_hz": 0.21595659565956593,
+          "bootstrap_ci_high_hz": 0.30424167416741665,
+          "confidence_score": 30.0,
+          "confidence_tier": "NOISE"
+        }
+      }
+    },
+    "nsr006": {
+      "subject_id": "nsr006",
+      "n_beats": 102663,
+      "duration_hours": 23.02296875,
+      "mean_hr_bpm": 78.15255195404606,
+      "bands": {
+        "VLF": {
+          "band_name": "VLF",
+          "band_range_hz": [
+            0.003,
+            0.04
+          ],
+          "ls_frequency_hz": 0.0036623662366236623,
+          "ls_power": 0.009051973146420358,
+          "ls_fap": 0.0,
+          "multi_window_cv": 31.269514219180643,
+          "multi_window_cv_clean": 13.97591287991053,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.0036715061506150614,
+          "bootstrap_freq_std_hz": 9.094099597677166e-05,
+          "bootstrap_ci_low_hz": 0.0036623662366236623,
+          "bootstrap_ci_high_hz": 0.0036623662366236623,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        },
+        "LF": {
+          "band_name": "LF",
+          "band_range_hz": [
+            0.04,
+            0.15
+          ],
+          "ls_frequency_hz": 0.049779977997799776,
+          "ls_power": 0.0013850076894751735,
+          "ls_fap": 2.152268322941452e-93,
+          "multi_window_cv": 18.71904256262275,
+          "multi_window_cv_clean": 12.58176248422023,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.05101342134213421,
+          "bootstrap_freq_std_hz": 0.00508587182667697,
+          "bootstrap_ci_low_hz": 0.04823982398239824,
+          "bootstrap_ci_high_hz": 0.07299229922992298,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        },
+        "HF": {
+          "band_name": "HF",
+          "band_range_hz": [
+            0.15,
+            0.4
+          ],
+          "ls_frequency_hz": 0.23538353835383538,
+          "ls_power": 0.0005508118176598813,
+          "ls_fap": 1.756968422499473e-33,
+          "multi_window_cv": 23.3267525570029,
+          "multi_window_cv_clean": 23.3267525570029,
+          "detection_rate": 0.5,
+          "bootstrap_freq_mean_hz": 0.23271677167716776,
+          "bootstrap_freq_std_hz": 0.028485189148680534,
+          "bootstrap_ci_low_hz": 0.19507950795079507,
+          "bootstrap_ci_high_hz": 0.28346334633463344,
+          "confidence_score": 35.0,
+          "confidence_tier": "NOISE"
+        }
+      }
+    }
+  },
+  "band_summary": {
+    "VLF": {
+      "mean_cv": 21.455640061720757,
+      "std_cv": 13.424695673906921,
+      "min_cv": 11.173876751611354,
+      "max_cv": 50.494360944745154,
+      "mean_detection_rate": 0.3541666666666667,
+      "n_subjects": 6
+    },
+    "LF": {
+      "mean_cv": 11.616447482904016,
+      "std_cv": 5.607938804177861,
+      "min_cv": 5.115115196829578,
+      "max_cv": 22.864139429318612,
+      "mean_detection_rate": 0.2916666666666667,
+      "n_subjects": 6
+    },
+    "HF": {
+      "mean_cv": 15.431790987036736,
+      "std_cv": 6.1257574626859554,
+      "min_cv": 8.148349164583452,
+      "max_cv": 23.3267525570029,
+      "mean_detection_rate": 0.5,
+      "n_subjects": 6
+    }
+  },
+  "summary": {
+    "n_subjects": 6,
+    "hf_mean_cv": 15.431790987036736,
+    "lf_mean_cv": 11.616447482904016,
+    "vlf_mean_cv": 21.455640061720757,
+    "interpretation": "The human heart produces CV of 15.4% for the respiratory-coupled HF band and 11.6% for sympathetically modulated LF oscillations, placing biological cardiac regulation between structural resonance and volcanic tremor in the cross-domain stability hierarchy, despite the heart being a genuine physical oscillator."
+  },
+  "cross_domain_comparison": {
+    "variable_stars": {
+      "cv_mean": 0.005,
+      "detection_rate": 1.0,
+      "domain": "Astronomy"
+    },
+    "bearings": {
+      "cv_mean": 0.008,
+      "detection_rate": 1.0,
+      "domain": "Industrial"
+    },
+    "tides": {
+      "cv_mean": 0.171,
+      "detection_rate": 1.0,
+      "domain": "Oceanography"
+    },
+    "structural": {
+      "cv_mean": 1.019,
+      "detection_rate": 1.0,
+      "domain": "Structural"
+    },
+    "volcanoes": {
+      "cv_mean": 3.96,
+      "detection_rate": 0.997,
+      "domain": "Geophysics"
+    }
+  }
+}

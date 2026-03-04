@@ -1,0 +1,85 @@
+{
+  "experiment": "Ab Astris Negative Control: Cryptocurrency",
+  "methodology": "Ab Astris (Lomb-Scargle + Multi-window + Bootstrap)",
+  "data_source": "Yahoo Finance (yfinance), 2023 daily closing prices",
+  "timestamp": "2026-02-27T11:22:07.251718",
+  "parameters": {
+    "sampling_interval_sec": 86400,
+    "freq_min_cpd": 0.0027397260273972603,
+    "freq_max_cpd": 0.5,
+    "n_windows": 8,
+    "window_duration_days": 60,
+    "n_bootstrap": 100,
+    "n_freq_points": 10000,
+    "bandpass_filter": "none",
+    "hilbert_envelope": "none"
+  },
+  "assets": {
+    "BTC": {
+      "asset_name": "BTC",
+      "symbol": "BTC-USD",
+      "ls_frequency_hz": 5.5884583892179165e-08,
+      "ls_frequency_cpd": 0.004828428048284279,
+      "ls_period_days": 207.10674157303376,
+      "ls_power": 0.4127574081630489,
+      "ls_fap": 1.5136726775263542e-38,
+      "multi_window_cv": 52.99618117743162,
+      "multi_window_cv_clean": 52.99618117743162,
+      "detection_rate": 0.0,
+      "bootstrap_freq_mean_cpd": 0.004832406528324065,
+      "bootstrap_freq_std_cpd": 5.8285072042613e-05,
+      "bootstrap_ci_low_cpd": 0.00472896604728966,
+      "bootstrap_ci_high_cpd": 0.0049278900492789,
+      "confidence_score": 25.0,
+      "confidence_tier": "NOISE"
+    },
+    "ETH": {
+      "asset_name": "ETH",
+      "symbol": "ETH-USD",
+      "ls_frequency_hz": 5.3006632474510763e-08,
+      "ls_frequency_cpd": 0.00457977304579773,
+      "ls_period_days": 218.35143139190527,
+      "ls_power": 0.5471327199993076,
+      "ls_fap": 7.45434131270507e-59,
+      "multi_window_cv": 91.14347930829868,
+      "multi_window_cv_clean": 71.87050173642734,
+      "detection_rate": 0.0,
+      "bootstrap_freq_mean_cpd": 0.004559383335593834,
+      "bootstrap_freq_std_cpd": 5.717767579564256e-05,
+      "bootstrap_ci_low_cpd": 0.004480311044803111,
+      "bootstrap_ci_high_cpd": 0.00467923504679235,
+      "confidence_score": 25.0,
+      "confidence_tier": "NOISE"
+    }
+  },
+  "summary": {
+    "mean_cv": 62.43334145692948,
+    "max_cv": 71.87050173642734,
+    "min_cv": 52.99618117743162,
+    "mean_detection_rate": 0.0,
+    "all_noise": true,
+    "interpretation": "Cryptocurrency prices produce mean CV of 62.4%, consistent with the absence of physics-constrained periodic forcing, compared to 0.17% for tidal constituents measured over the same calendar year."
+  },
+  "cross_domain_comparison": {
+    "variable_stars": {
+      "cv_mean": 0.005,
+      "detection_rate": 1.0,
+      "domain": "Astronomy"
+    },
+    "bearings": {
+      "cv_mean": 0.008,
+      "detection_rate": 1.0,
+      "domain": "Industrial"
+    },
+    "tides": {
+      "cv_mean": 0.171,
+      "detection_rate": 1.0,
+      "domain": "Oceanography"
+    },
+    "volcanoes": {
+      "cv_mean": 3.96,
+      "detection_rate": 0.997,
+      "domain": "Geophysics"
+    }
+  }
+}

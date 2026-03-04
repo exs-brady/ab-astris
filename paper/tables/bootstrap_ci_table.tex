@@ -1,0 +1,29 @@
+\begin{table}[htbp]
+\centering
+\caption{Cross-domain CV gradient with 95\% bootstrap confidence intervals (percentile bootstrap, $n=100{,}000$ resamples, seed 42). $N$ = number of individual CV measurements per domain. Entries with $N=1$ are point estimates where bootstrap CI is not applicable.\textsuperscript{$\dagger$}}
+\label{tab:cvgradient}
+\smallskip
+\small
+\begin{tabular}{llrrrrll}
+\toprule
+\textbf{Domain} & \textbf{Forcing} & \textbf{$N$} & \textbf{CV (\%)} & \textbf{CI lower} & \textbf{CI upper} & \textbf{Category} \\
+\midrule
+Tides (S2)             & Orbital mechanics        &    6 &  0.000 &  0.000 &  0.000 & Physics-constrained \\
+Bearings               & Fixed geometry           &    5 &  0.008 &  0.006 &  0.010 & Physics-constrained \\
+Tides (M2)             & Orbital mechanics        &    6 &  0.096 &  0.088 &  0.102 & Physics-constrained \\
+Tides (K1, O1)         & Orbital + modulation     &   12 &  0.305 &  0.236 &  0.377 & Physics-constrained \\
+Structural (Z24)       & Ambient excitation       &  814 &  0.730 &  0.637 &  0.830 & Physics-constrained \\
+Structural (CESMD)     & Earthquake excitation    &    6 &   1.02 &   1.01 &   1.03 & Physics-constrained \\
+\midrule
+Sunspots (11-yr)       & MHD dynamo               &    1 &   2.97 & ---\textsuperscript{$\dagger$} & ---\textsuperscript{$\dagger$} & Chaotic \\
+Sunspots (27-day)      & Differential rotation    &    1 &   5.33 & ---\textsuperscript{$\dagger$} & ---\textsuperscript{$\dagger$} & Chaotic \\
+Volcanic tremor        & Evolving source          &  679 &   9.91 &   9.56 &   10.3 & Quasi-periodic \\
+HRV (LF)               & Autonomic regulation     &    6 &   11.6 &   7.72 &   16.6 & Biological \\
+HRV (HF)               & Autonomic regulation     &    6 &   15.4 &   10.6 &   20.3 & Biological \\
+HRV (VLF)              & Autonomic regulation     &    6 &   21.5 &   13.5 &   33.6 & Biological \\
+Crypto (BTC)           & Market sentiment         &    1 &   53.0 & ---\textsuperscript{$\dagger$} & ---\textsuperscript{$\dagger$} & Stochastic \\
+Crypto (ETH)           & Market sentiment         &    1 &   71.9 & ---\textsuperscript{$\dagger$} & ---\textsuperscript{$\dagger$} & Stochastic \\
+\bottomrule
+\end{tabular}
+\par\smallskip\footnotesize\textsuperscript{$\dagger$}Single-measurement entries ($N=1$): bootstrap CI is not applicable; values are point estimates.
+\end{table}

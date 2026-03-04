@@ -1,0 +1,142 @@
+{
+  "experiment": "tremorscope_chunk1",
+  "volcano": {
+    "name": "Redoubt Volcano",
+    "latitude": 60.4857,
+    "longitude": -152.7442,
+    "elevation_m": 3108,
+    "location": "Cook Inlet, Alaska"
+  },
+  "station": "REF",
+  "elapsed_seconds": 44.71678185462952,
+  "phase1": [
+    {
+      "phase": "Quiet Baseline",
+      "description": "No volcanic unrest",
+      "start_time": "2008-08-01T12:00:00",
+      "ls_frequency": 0.7565256525652566,
+      "ls_power": 0.0022560914578376476,
+      "ls_fap": 4.735601830641479e-24,
+      "multi_window_cv": 6.379190433380018,
+      "detection_rate": 1.0,
+      "tremor_score": 65,
+      "tremor_tier": "PROBABLE TREMOR",
+      "mean_rsam": 1137.6478,
+      "bootstrap_cv": 11.261429010923777
+    },
+    {
+      "phase": "Early Unrest",
+      "description": "First regular tremor episodes",
+      "start_time": "2009-01-25T08:00:00",
+      "ls_frequency": 0.6596159615961597,
+      "ls_power": 0.006345995185679172,
+      "ls_fap": 2.4304697754383486e-77,
+      "multi_window_cv": 1.7755985458930474,
+      "detection_rate": 1.0,
+      "tremor_score": 80,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 148.14038333333335,
+      "bootstrap_cv": 1.9116704626704704
+    },
+    {
+      "phase": "Tremor Intensifying",
+      "description": "Tremor 1\u20134 Hz becoming regular",
+      "start_time": "2009-01-30T06:00:00",
+      "ls_frequency": 0.8667366736673667,
+      "ls_power": 0.002012821740989348,
+      "ls_fap": 6.7102894250487926e-21,
+      "multi_window_cv": 2.9229939596132017,
+      "detection_rate": 1.0,
+      "tremor_score": 80,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 160.7656,
+      "bootstrap_cv": 4.709324196262109
+    },
+    {
+      "phase": "February Swarm",
+      "description": "Notable seismic swarm",
+      "start_time": "2009-02-27T00:00:00",
+      "ls_frequency": 1.1821682168216823,
+      "ls_power": 0.0021687861161027327,
+      "ls_fap": 6.40851261302793e-23,
+      "multi_window_cv": 3.716134059379305,
+      "detection_rate": 1.0,
+      "tremor_score": 90,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 108.15828333333334,
+      "bootstrap_cv": 9.164633161228602
+    },
+    {
+      "phase": "Pre-Phreatic",
+      "description": "Day before first phreatic explosion",
+      "start_time": "2009-03-14T12:00:00",
+      "ls_frequency": 1.0035503550355036,
+      "ls_power": 0.002500873047810266,
+      "ls_fap": 3.170151816628694e-27,
+      "multi_window_cv": 6.908145445378959,
+      "detection_rate": 1.0,
+      "tremor_score": 80,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 152.7358333333333,
+      "bootstrap_cv": 5.507149620420838
+    },
+    {
+      "phase": "Pre-Magmatic",
+      "description": "Hours before first magmatic explosion",
+      "start_time": "2009-03-22T20:00:00",
+      "ls_frequency": 1.0938093809380938,
+      "ls_power": 0.0011167818836911867,
+      "ls_fap": 2.459748484956133e-09,
+      "multi_window_cv": 3.3470982052200884,
+      "detection_rate": 1.0,
+      "tremor_score": 85,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 193.70743333333334,
+      "bootstrap_cv": 8.981514450474865
+    },
+    {
+      "phase": "Explosive Phase",
+      "description": "During explosive sequence & gliding tremor",
+      "start_time": "2009-03-28T12:00:00",
+      "ls_frequency": 1.1612661266126612,
+      "ls_power": 0.0016440979868219167,
+      "ls_fap": 3.939151961601303e-16,
+      "multi_window_cv": 4.630110340394784,
+      "detection_rate": 1.0,
+      "tremor_score": 90,
+      "tremor_tier": "CONFIRMED TREMOR",
+      "mean_rsam": 237.18276666666668,
+      "bootstrap_cv": 10.67624881601836
+    },
+    {
+      "phase": "Extrusive Phase",
+      "description": "Dome growth, declining explosivity",
+      "start_time": "2009-04-10T12:00:00",
+      "ls_frequency": 0.5304030403040304,
+      "ls_power": 0.0028697468326965084,
+      "ls_fap": 5.155384783829855e-32,
+      "multi_window_cv": 3.5945662978056805,
+      "detection_rate": 1.0,
+      "tremor_score": 75,
+      "tremor_tier": "PROBABLE TREMOR",
+      "mean_rsam": 126.99045000000001,
+      "bootstrap_cv": 14.175901895094578
+    }
+  ],
+  "cross_domain_comparison": {
+    "volcanic_tremor_cv_range": [
+      1.7755985458930474,
+      6.908145445378959
+    ],
+    "volcanic_tremor_cv_mean": 4.159229660883136,
+    "bearing_fault_cv_mean": 0.0082,
+    "btc_crypto_cv_range": [
+      48,
+      88
+    ],
+    "variable_star_cv_range": [
+      0.001,
+      0.01
+    ]
+  }
+}

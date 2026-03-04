@@ -1,0 +1,214 @@
+{
+  "comparison_date": "2026-02-23",
+  "purpose": "Head-to-head: Ab Astris generic vs conventional envelope analysis on CWRU bearing data",
+  "cwru_bearing_geometry": {
+    "ball_diameter_mm": 7.94,
+    "pitch_diameter_mm": 39.04,
+    "n_balls": 9,
+    "contact_angle_deg": 0
+  },
+  "envelope_parameters": {
+    "bandpass_hz": [
+      1000,
+      5000
+    ],
+    "bandpass_order": 4,
+    "peak_tolerance_pct": 5.0,
+    "snr_threshold_db": 10.0,
+    "sampling_rate_hz": 12000
+  },
+  "conditions": [
+    {
+      "condition": "Normal",
+      "fault_type": "Shaft",
+      "target_freq_hz": 29.95,
+      "ab_astris": {
+        "detected_freq_hz": 29.931328755250348,
+        "freq_error_pct": null,
+        "cv_pct": 0.027137873848853168,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 29.909,
+        "freq_error_pct": 0.136,
+        "peak_snr_db": 45.1,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 29.954,
+        "freq_error_pct": 0.012,
+        "peak_snr_db": 80.8,
+        "detected": true
+      }
+    },
+    {
+      "condition": "IR 0.007\"",
+      "fault_type": "BPFI",
+      "target_freq_hz": 162.186,
+      "ab_astris": {
+        "detected_freq_hz": 161.67077805187012,
+        "freq_error_pct": 0.31748552832194743,
+        "cv_pct": 0.00521330419350106,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 161.695,
+        "freq_error_pct": 0.302,
+        "peak_snr_db": 49.7,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 161.742,
+        "freq_error_pct": 0.273,
+        "peak_snr_db": 87.4,
+        "detected": true
+      }
+    },
+    {
+      "condition": "IR 0.014\"",
+      "fault_type": "BPFI",
+      "target_freq_hz": 162.095,
+      "ab_astris": {
+        "detected_freq_hz": 162.02546836455764,
+        "freq_error_pct": 0.04316729018730118,
+        "cv_pct": 0.009373449137804678,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 162.008,
+        "freq_error_pct": 0.054,
+        "peak_snr_db": 42.5,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 161.942,
+        "freq_error_pct": 0.095,
+        "peak_snr_db": 54.3,
+        "detected": true
+      }
+    },
+    {
+      "condition": "IR 0.021\"",
+      "fault_type": "BPFI",
+      "target_freq_hz": 162.186,
+      "ab_astris": {
+        "detected_freq_hz": 161.876125075005,
+        "freq_error_pct": 0.19087323726961888,
+        "cv_pct": 0.009971312693357342,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 161.82,
+        "freq_error_pct": 0.226,
+        "peak_snr_db": 43.1,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 161.942,
+        "freq_error_pct": 0.15,
+        "peak_snr_db": 67.3,
+        "detected": true
+      }
+    },
+    {
+      "condition": "OR 0.007\"",
+      "fault_type": "BPFO",
+      "target_freq_hz": 107.305,
+      "ab_astris": {
+        "detected_freq_hz": 107.64584305620374,
+        "freq_error_pct": 0.31805137805805017,
+        "cv_pct": 0.009339804477322558,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 107.614,
+        "freq_error_pct": 0.289,
+        "peak_snr_db": 55.9,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 107.629,
+        "freq_error_pct": 0.302,
+        "peak_snr_db": 114.7,
+        "detected": true
+      }
+    },
+    {
+      "condition": "OR 0.014\"",
+      "fault_type": "BPFO",
+      "target_freq_hz": 107.305,
+      "ab_astris": {
+        "detected_freq_hz": 179.1812787519168,
+        "freq_error_pct": 66.98384459152606,
+        "cv_pct": null,
+        "detected": false
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 108.038,
+        "freq_error_pct": 0.684,
+        "peak_snr_db": 15.8,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 108.028,
+        "freq_error_pct": 0.675,
+        "peak_snr_db": 28.9,
+        "detected": true
+      }
+    },
+    {
+      "condition": "OR 0.021\"",
+      "fault_type": "BPFO",
+      "target_freq_hz": 107.305,
+      "ab_astris": {
+        "detected_freq_hz": 107.49649976665111,
+        "freq_error_pct": 0.17887435673557403,
+        "cv_pct": 0.005990056506199342,
+        "detected": true
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 107.526,
+        "freq_error_pct": 0.207,
+        "peak_snr_db": 44.2,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 107.429,
+        "freq_error_pct": 0.116,
+        "peak_snr_db": 67.5,
+        "detected": true
+      }
+    },
+    {
+      "condition": "Ball 0.007\"",
+      "fault_type": "BSF",
+      "target_freq_hz": 70.545,
+      "ab_astris": {
+        "detected_freq_hz": 29.91266084405627,
+        "freq_error_pct": 57.597948365732854,
+        "cv_pct": 0.0437900153400274,
+        "detected": false
+      },
+      "envelope_fft": {
+        "detected_freq_hz": 71.86,
+        "freq_error_pct": 1.864,
+        "peak_snr_db": 24.4,
+        "detected": true
+      },
+      "envelope_ls": {
+        "detected_freq_hz": 71.886,
+        "freq_error_pct": 1.901,
+        "peak_snr_db": 45.4,
+        "detected": true
+      }
+    }
+  ],
+  "summary": {
+    "ab_astris_detected": 6,
+    "envelope_fft_detected": 8,
+    "envelope_ls_detected": 8,
+    "ab_astris_mean_error_pct": 0.21,
+    "envelope_fft_mean_error_pct": 0.47,
+    "envelope_ls_mean_error_pct": 0.441
+  }
+}

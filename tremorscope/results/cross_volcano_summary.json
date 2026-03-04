@@ -1,0 +1,66 @@
+{
+  "kilauea": {
+    "volcano": "K\u012blauea 2018",
+    "eruption_type": "Effusive + summit collapse",
+    "n_snapshots": 272,
+    "ls_first_detection": "2018-05-26T00:00:00",
+    "ls_hours_before_event": -505.46666666666664,
+    "rsam_first_detection": "2018-04-30T00:00:00",
+    "rsam_hours_before_event": 118.53333333333333,
+    "early_warning_hours": -624.0,
+    "cv_mean": 10.229543101420921,
+    "cv_range": [
+      1.558579219740207,
+      22.383238487798643
+    ],
+    "mean_detection_rate": 0.5410539215686275
+  },
+  "msh": {
+    "volcano": "Mt St Helens 2004",
+    "eruption_type": "Dome-building",
+    "n_snapshots": 255,
+    "ls_first_detection": "2004-09-06T00:00:00",
+    "ls_hours_before_event": 612.0,
+    "rsam_first_detection": "2004-09-01T20:00:00",
+    "rsam_hours_before_event": 712.0,
+    "early_warning_hours": -100.0,
+    "cv_mean": 10.003779586745367,
+    "cv_range": [
+      0.41614456784218357,
+      22.447920847748286
+    ],
+    "mean_detection_rate": 0.5836601307189542
+  },
+  "pavlof": {
+    "volcano": "Pavlof 2016",
+    "eruption_type": "Vulcanian",
+    "n_snapshots": 180,
+    "ls_first_detection": "2016-02-15T00:00:00",
+    "ls_hours_before_event": 1003.3,
+    "rsam_first_detection": "2016-02-17T22:00:00",
+    "rsam_hours_before_event": 933.3,
+    "early_warning_hours": 70.0,
+    "cv_mean": 9.303710322731003,
+    "cv_range": [
+      0.29166102563300456,
+      19.918790003364307
+    ],
+    "mean_detection_rate": 0.6277777777777778
+  },
+  "augustine": {
+    "volcano": "Augustine 2006",
+    "eruption_type": "Explosive \u2192 effusive",
+    "n_snapshots": 203,
+    "ls_first_detection": "2005-11-15T00:00:00",
+    "ls_hours_before_event": 1374.0,
+    "rsam_first_detection": "2005-11-19T16:00:00",
+    "rsam_hours_before_event": 1262.0,
+    "early_warning_hours": 112.0,
+    "cv_mean": 9.945859487209015,
+    "cv_range": [
+      0.5032661906055682,
+      26.87797742127003
+    ],
+    "mean_detection_rate": 0.6756978653530379
+  }
+}

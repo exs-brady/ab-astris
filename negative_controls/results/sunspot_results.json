@@ -1,0 +1,83 @@
+{
+  "experiment": "Ab Astris Negative Control: Sunspot Number",
+  "methodology": "Ab Astris (Lomb-Scargle + Multi-window + Bootstrap)",
+  "data_source": "SILSO (Royal Observatory of Belgium), CC BY-NC 4.0",
+  "timestamp": "2026-02-27T11:22:08.691305",
+  "analyses": {
+    "monthly_11yr": {
+      "analysis_name": "11-year solar cycle",
+      "description": "Monthly sunspot numbers 1749-present, targeting ~11-year MHD dynamo cycle",
+      "n_data_points": 3325,
+      "time_span_years": 277.0,
+      "ls_frequency_hz": 2.8802598869667182e-09,
+      "ls_frequency_cy_per_year": 0.0908940894089409,
+      "ls_period_years": 11.00181548110249,
+      "ls_period_days": 4018.4131044726846,
+      "ls_power": 0.24418685295724343,
+      "ls_fap": 2.1935030061242053e-197,
+      "multi_window_cv": 6.596321537356385,
+      "multi_window_cv_clean": 2.974320656935849,
+      "detection_rate": 0.8333333333333334,
+      "n_windows": 6,
+      "bootstrap_freq_mean_hz": 2.8798273013094905e-09,
+      "bootstrap_freq_std_hz": 2.638271444493061e-12,
+      "bootstrap_ci_low_hz": 2.874531692274863e-09,
+      "bootstrap_ci_high_hz": 2.8845382066535806e-09,
+      "confidence_score": 81.7,
+      "confidence_tier": "PROBABLE"
+    },
+    "daily_27day": {
+      "analysis_name": "27-day solar rotation",
+      "description": "Daily sunspot numbers 1980-present, targeting ~27.3-day Carrington rotation",
+      "n_data_points": 16833,
+      "time_span_years": 46.083000000000084,
+      "ls_frequency_hz": 4.32959962662933e-07,
+      "ls_frequency_cy_per_year": 13.663177317731774,
+      "ls_period_years": 0.07318941829893562,
+      "ls_period_days": 26.732435033686237,
+      "ls_power": 0.00298197424119129,
+      "ls_fap": 2.632772136200045e-06,
+      "multi_window_cv": 19.87223551141803,
+      "multi_window_cv_clean": 5.332360662537657,
+      "detection_rate": 0.5,
+      "n_windows": 8,
+      "bootstrap_freq_mean_hz": 4.2250266693336007e-07,
+      "bootstrap_freq_std_hz": 4.576059223735112e-08,
+      "bootstrap_ci_low_hz": 2.635784411774511e-07,
+      "bootstrap_ci_high_hz": 4.448413591359136e-07,
+      "confidence_score": 50.0,
+      "confidence_tier": "NOISE"
+    }
+  },
+  "summary": {
+    "11yr_cycle_cv": 2.974320656935849,
+    "11yr_cycle_period": 11.00181548110249,
+    "11yr_cycle_tier": "PROBABLE",
+    "27day_rotation_cv": 5.332360662537657,
+    "27day_rotation_period": 26.732435033686237,
+    "27day_rotation_tier": "NOISE",
+    "interpretation": "The solar dynamo produces CV of 3.0% for the ~11-year cycle and 5.3% for the ~27-day rotation, placing them orders of magnitude above stellar pulsation CV of <0.01% \u2014 despite both being astronomical periodic signals. This within-domain contrast demonstrates that the CV metric discriminates between deterministic and chaotic periodic forcing, not merely between domains."
+  },
+  "cross_domain_comparison": {
+    "variable_stars": {
+      "cv_mean": 0.005,
+      "detection_rate": 1.0,
+      "domain": "Astronomy (stellar)"
+    },
+    "bearings": {
+      "cv_mean": 0.008,
+      "detection_rate": 1.0,
+      "domain": "Industrial"
+    },
+    "tides": {
+      "cv_mean": 0.171,
+      "detection_rate": 1.0,
+      "domain": "Oceanography"
+    },
+    "volcanoes": {
+      "cv_mean": 3.96,
+      "detection_rate": 0.997,
+      "domain": "Geophysics"
+    }
+  }
+}

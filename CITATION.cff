@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite our paper."
+title: "Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline"
+authors:
+  - family-names: Brady
+    given-names: Tom
+    affiliation: The Modal Foundation
+    email: tom@modalfoundation.org
+type: software
+license: MIT
+repository-code: https://github.com/exs-brady/ab-astris
+preferred-citation:
+  type: article
+  title: "Ab Astris: Cross-Domain Transfer of a Physics-Constrained Signal Detection Pipeline"
+  authors:
+    - family-names: Brady
+      given-names: Tom
+      affiliation: The Modal Foundation
+  year: 2025
